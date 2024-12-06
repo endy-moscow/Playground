@@ -1,6 +1,7 @@
 // page.tsx
 'use client';
 
+import { Html } from '@react-three/drei';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
@@ -33,6 +34,7 @@ export default function Page() {
       <Suspense fallback={null}>
         {/* Рендерим кольцо частиц */}
         <InfiniteRingEmitter />
+        <Html><h1>Hello World</h1></Html>
         {/* Цвет фона и освещение */}
         <Common color="#E72487" />
       </Suspense>

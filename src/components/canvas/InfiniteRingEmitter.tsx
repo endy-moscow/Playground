@@ -1,165 +1,108 @@
-import React, { useMemo, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { EffectComposer, Bloom, SMAA } from '@react-three/postprocessing';
-import { KernelSize } from 'postprocessing';
+import React, { useRef, useState, useEffect } from 'react';
+import { useFrame, useLoader, useThree } from '@react-three/fiber';
+import { useCursor } from '@react-three/drei';
 import * as THREE from 'three';
+import { TextureLoader } from 'three';
 
-// *** Настройки ***
-const PARTICLE_COUNT = 100; // Количество линий
-const RADIUS = 50; // Радиус генерации частиц
-const ROTATION_SPEED = 0.1; // Скорость вращения вокруг оси трубы
-const PARTICLE_SPEED = 1; // Скорость движения частиц вдоль оси Z
-const RESET_THRESHOLD = 50; // Граница, после которой линии перезапускаются
-const BLOOM_INTENSITY = 3.0; // Интенсивность свечения
-const BLOOM_THRESHOLD = 0.2; // Порог свечения
-const BLOOM_SMOOTHING = 0.5; // Плавность свечения
-const OPACITY_FADE_SPEED = 0.8; // Скорость фейдинга (появление и исчезновение линий)
-const LINE_WIDTH = 60; // Толщина линий
-const INITIAL_OPACITY = 0.5; // Начальная прозрачность
-const SPAWN_INTERVAL = 0.001; // Интервал появления новых частиц (в секундах)
-// ********************
+// Настройки
+const TUNNEL_RADIUS = 30; // Радиус трубы
+const TUNNEL_LENGTH = 1000; // Длина трубы
+const SEGMENTS = 500; // Количество сегментов трубы
+const TUNNEL_SPEED = { x: 0.4, y: 0.1 }; // Скорость движения текстуры по X и Y
+const TEXTURE_REPEAT = { x: 0.1, y: 5 }; // Повторение текстуры
+const TUNNEL_POSITION = [0, 0, -999]; // Позиция трубы (отодвинута дальше по Z)
+const CURVE_TWISTS = 1; // Количество поворотов на всю длину
+const CURVE_AMPLITUDE_START = 0; // Амплитуда поворотов ближе к камере
+const CURVE_AMPLITUDE_END = 64; // Амплитуда поворотов в конце (дальше от камеры)
+const MOUSE_SENSITIVITY = 0.01; // Чувствительность к движению мыши
+const AUTO_ROTATE_SPEED = 0.24; // Автоматическая скорость вращения трубы
+const BOOST_ROTATE_MULTIPLIER = 2; // Увеличение скорости вращения при клике
 
-function InfiniteRingEmitter() {
-  const linesRef = useRef<THREE.LineSegments>(null);
-  let lastSpawnTime = 0;
+const InfiniteRingEmitter = () => {
+  const tunnelRef = useRef();
+  const { size, camera } = useThree();
+  const texture = useLoader(TextureLoader, '/img/example.jpg'); // Путь к текстуре
+  const [hovered, setHovered] = useState(false);
+  const [mouse, setMouse] = useState({ x: 0.5, y: 0.5 }); // Положение мыши
+  const [rotationBoost, setRotationBoost] = useState(1);
+  const [tunnelSpeed, setTunnelSpeed] = useState(TUNNEL_SPEED); // Скорость текстуры
 
-  // Генерация линий
-  const { positions, radii, angles, opacities } = useMemo(() => {
-    const positions = [];
-    const radii = [];
-    const angles = [];
-    const opacities = [];
+  useCursor(hovered, 'pointer', 'auto');
 
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const angle = Math.random() * Math.PI * 3; // Угол вокруг центра
-      const r = RADIUS + THREE.MathUtils.randFloat(-0.1, 0.1); // Радиус с шумом
+  // Настройка текстуры
+  texture.wrapS = THREE.MirroredRepeatWrapping;
+  texture.wrapT = THREE.MirroredRepeatWrapping;
+  texture.repeat.set(TEXTURE_REPEAT.x, TEXTURE_REPEAT.y);
 
-      const x = Math.cos(angle) * r; // Начало линии
-      const y = Math.sin(angle) * r;
-      const z = THREE.MathUtils.randFloat(-100, -50); // Начальная глубина
+  // Обработка событий мыши
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      const x = event.clientX / size.width;
+      const y = event.clientY / size.height;
+      setMouse({ x, y });
+    };
 
-      const length = THREE.MathUtils.randFloat(1, 5); // Длина линии
-      const x2 = x;
-      const y2 = y;
-      const z2 = z + length;
+    const handlePointerDown = () => {
+      setRotationBoost(BOOST_ROTATE_MULTIPLIER);
+      setTunnelSpeed({ x: TUNNEL_SPEED.x * 2, y: TUNNEL_SPEED.y * 2 });
+    };
+    const handlePointerUp = () => {
+      setRotationBoost(1);
+      setTunnelSpeed(TUNNEL_SPEED);
+    };
 
-      positions.push(x, y, z, x2, y2, z2);
-      radii.push(r); // Сохраняем радиус для линии
-      angles.push(angle); // Сохраняем начальный угол
-      opacities.push(0); // Изначально линии невидимы
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('pointerup', handlePointerUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+  }, [size]);
+
+  // Анимация текстуры и вращения трубы
+  useFrame((_, delta) => {
+    if (tunnelRef.current?.material?.map) {
+      tunnelRef.current.material.map.offset.x -= tunnelSpeed.x * delta; // Движение по X
+      tunnelRef.current.material.map.offset.y -= tunnelSpeed.y * delta; // Движение по Y
     }
 
-    return {
-      positions: new Float32Array(positions),
-      radii,
-      angles,
-      opacities,
-    };
-  }, []);
-
-  // Анимация линий
-  useFrame(({ clock }) => {
-    if (linesRef.current) {
-      const positionsArray = linesRef.current.geometry.attributes.position.array;
-      const opacityAttribute = linesRef.current.geometry.attributes.opacity.array;
-      const time = clock.getElapsedTime();
-
-      // Перезапуск линий с равномерным интервалом
-      if (time - lastSpawnTime > SPAWN_INTERVAL) {
-        const idx = Math.floor(Math.random() * PARTICLE_COUNT); // Случайная линия
-        const newAngle = Math.random() * Math.PI * 2;
-        const newRadius = RADIUS + THREE.MathUtils.randFloat(-0.1, 0.1);
-        const x = Math.cos(newAngle) * newRadius;
-        const y = Math.sin(newAngle) * newRadius;
-        const z = THREE.MathUtils.randFloat(-100, -50);
-        const length = THREE.MathUtils.randFloat(1, 5);
-
-        positionsArray[idx * 6 + 0] = x; // x начала
-        positionsArray[idx * 6 + 1] = y; // y начала
-        positionsArray[idx * 6 + 2] = z; // z начала
-        positionsArray[idx * 6 + 3] = x; // x конца
-        positionsArray[idx * 6 + 4] = y; // y конца
-        positionsArray[idx * 6 + 5] = z + length; // z конца
-
-        radii[idx] = newRadius;
-        angles[idx] = newAngle;
-        opacityAttribute[idx] = 0; // Начинаем с нуля
-
-        lastSpawnTime = time; // Обновляем время последнего перезапуска
-      }
-
-      // Анимация и плавное появление
-      for (let i = 0; i < positionsArray.length; i += 6) {
-        const idx = i / 6;
-        const radius = radii[idx];
-        const initialAngle = angles[idx];
-        const angle = initialAngle + ROTATION_SPEED * time;
-
-        // Обновляем координаты начала линии
-        positionsArray[i] = Math.cos(angle) * radius; // x
-        positionsArray[i + 1] = Math.sin(angle) * radius; // y
-        positionsArray[i + 2] += PARTICLE_SPEED; // z
-
-        // Обновляем координаты конца линии
-        positionsArray[i + 3] = Math.cos(angle) * radius; // x
-        positionsArray[i + 4] = Math.sin(angle) * radius; // y
-        positionsArray[i + 5] += PARTICLE_SPEED; // z
-
-        // Плавное увеличение прозрачности
-        if (opacityAttribute[idx] < INITIAL_OPACITY) {
-          opacityAttribute[idx] += OPACITY_FADE_SPEED;
-        }
-
-        // Перезапуск линии, если выходит за границу
-        if (positionsArray[i + 2] > RESET_THRESHOLD) {
-          opacityAttribute[idx] = 0; // Сбрасываем прозрачность
-        }
-      }
-
-      linesRef.current.geometry.attributes.position.needsUpdate = true;
-      linesRef.current.geometry.attributes.opacity.needsUpdate = true;
+    // Автоматическое вращение трубы
+    if (tunnelRef.current) {
+      tunnelRef.current.rotation.z += AUTO_ROTATE_SPEED * rotationBoost * delta;
     }
   });
 
-  return (
-    <>
-      {/* Линии */}
-      <lineSegments ref={linesRef}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            array={positions}
-            count={positions.length / 3}
-            itemSize={3}
-          />
-          <bufferAttribute
-            attach="attributes-opacity"
-            array={new Float32Array(opacities)}
-            count={opacities.length}
-            itemSize={1}
-          />
-        </bufferGeometry>
-        <lineBasicMaterial
-          color="#FFFFFF"
-          linewidth={LINE_WIDTH}
-          transparent
-          opacity={INITIAL_OPACITY}
-          depthWrite={false}
-        />
-      </lineSegments>
-
-      {/* Эффект Bloom */}
-      <EffectComposer>
-        <Bloom
-          intensity={BLOOM_INTENSITY}
-          luminanceThreshold={BLOOM_THRESHOLD}
-          luminanceSmoothing={BLOOM_SMOOTHING}
-          kernelSize={KernelSize.LARGE}
-        />
-        <SMAA />
-      </EffectComposer>
-    </>
+  // Создаем кривую с плавным изменением амплитуды
+  const curve = new THREE.CatmullRomCurve3(
+    Array.from({ length: SEGMENTS }, (_, i) => {
+      const progress = i / SEGMENTS; // Прогресс от 0 до 1
+      const angle = progress * Math.PI * CURVE_TWISTS; // Закручивание трубы
+      const amplitude =
+        (1 - progress) * CURVE_AMPLITUDE_END + // Уменьшение амплитуды ближе к камере
+        progress * CURVE_AMPLITUDE_START; // Увеличение амплитуды дальше от камеры
+      return new THREE.Vector3(
+        Math.sin(angle) * amplitude, // Изгиб по X
+        Math.cos(angle) * amplitude, // Изгиб по Y
+        i * (TUNNEL_LENGTH / SEGMENTS) // Длина по Z
+      );
+    })
   );
-}
+
+
+  return (
+    <mesh
+      ref={tunnelRef}
+      position={TUNNEL_POSITION}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+    >
+      <tubeGeometry args={[curve, SEGMENTS, TUNNEL_RADIUS, 36, true]} />
+      <meshStandardMaterial side={THREE.BackSide} map={texture} />
+    </mesh>
+  );
+};
 
 export default InfiniteRingEmitter;
