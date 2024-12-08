@@ -30,14 +30,22 @@ const InfiniteRingEmitter = dynamic(() => import('../src/components/canvas/Infin
 
 export default function Page() {
   return (
-    <View className="relative size-full">
-      <Suspense fallback={null}>
-        {/* Рендерим кольцо частиц */}
-        <InfiniteRingEmitter />
-        <Html><h1>Hello World</h1></Html>
-        {/* Цвет фона и освещение */}
-        <Common color="#E72487" />
-      </Suspense>
-    </View>
+    <>
+      <View className="relative size-full">
+        <Suspense fallback={null}>
+          <InfiniteRingEmitter />
+          <Html><h1>Hello World</h1></Html>
+          <Common color="#E72487" />
+        </Suspense>
+      </View>
+      <div className="h-screen w-full bg-white"></div>
+      <View className="relative size-full">
+        <Suspense fallback={null}>
+          <InfiniteRingEmitter />
+          <Html><h1>Hello World</h1></Html>
+          <Common color="#E72487" />
+        </Suspense>
+      </View>
+    </>
   );
 }
