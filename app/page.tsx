@@ -4,21 +4,20 @@
 import { Html } from '@react-three/drei';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
+import Image from 'next/image';
+
+// Import Swiper styles
+import 'swiper/css';
+import { Autoplay, EffectCreative } from 'swiper/modules';
+
 
 // Динамические импорты
 const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.View), {
   ssr: false,
   loading: () => (
-    <div className="flex h-96 w-full flex-col items-center justify-center">
-      <svg className="-ml-1 mr-3 size-5 animate-spin text-black" fill="none" viewBox="0 0 24 24">
-        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-        <path
-          className="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        />
-      </svg>
-    </div>
+    <div className="flex size-full items-center justify-center bg-altel" />
   ),
 });
 
@@ -34,18 +33,85 @@ export default function Page() {
       <View className="relative size-full">
         <Suspense fallback={null}>
           <InfiniteRingEmitter />
-          <Html><h1>Hello World</h1></Html>
           <Common color="#E72487" />
         </Suspense>
       </View>
-      <div className="h-screen w-full bg-white"></div>
-      <View className="relative size-full">
-        <Suspense fallback={null}>
-          <InfiniteRingEmitter />
-          <Html><h1>Hello World</h1></Html>
-          <Common color="#E72487" />
-        </Suspense>
-      </View>
+      <div className="absolute inset-0 z-50 h-screen w-full bg-altel mix-blend-color"></div>
+
+      <div className="absolute inset-0 z-50 flex h-screen w-full flex-col items-center justify-center text-white">
+        <Image
+          src="/img/altel.svg"
+          width={240} // Задайте ширину
+          height={50} // Задайте высоту
+          alt="Logo"
+          className="mb-10"
+        />
+        <h1 className="max-w-7xl text-center font-stratos text-8xl font-bold uppercase leading-tight">
+          быстрая и стабильная связь для всей семьи
+        </h1>
+
+        <Swiper
+          spaceBetween={10}
+          effect={'creative'}
+          creativeEffect={{
+            prev: {
+              translate: [0, -40, 0],
+              opacity: 0,
+            },
+            next: {
+              translate: [0, -40, 0],
+              opacity: 0,
+            },
+          }}
+          slidesPerView={1}
+          className="my-24 w-8/12 text-4xl"
+          // centeredSlides={true}
+          // direction={'vertical'}
+          autoplay={{
+            delay: 4500,
+            disableOnInteraction: false,
+          }}
+          modules={[Autoplay, EffectCreative]}
+        >
+          <SwiperSlide className="flex items-center justify-center">
+            <div className="flex size-full items-center justify-center">
+              <p className="w-full text-center">Стабильная связь без помех</p>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide className="flex items-center justify-center">
+            <div className="flex size-full items-center justify-center">
+              <p className="w-full text-center">Сверхскоростной интернет</p>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide className="flex items-center justify-center">
+            <div className="flex size-full items-center justify-center">
+              <p className="w-full text-center">Быстрая загрузка и отправка файлов</p>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide className="flex items-center justify-center">
+            <div className="flex size-full items-center justify-center">
+              <p className="w-full text-center">Минимальный пинг в играх</p>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide className="flex items-center justify-center">
+            <div className="flex size-full items-center justify-center">
+              <p className="w-full text-center">Без проседаний скорости по вечерам</p>
+            </div>
+          </SwiperSlide>
+        </Swiper>
+
+        <button className="rounded-lg bg-white px-12 py-6 text-3xl text-altel">
+          Узнать больше
+        </button>
+
+      </div>
+      <div className="flex h-screen w-full items-center justify-center">
+        <h1>Second</h1>
+      </div>
+      <div className="flex h-screen w-full items-center justify-center">
+        <h1>Third</h1>
+      </div>
+
     </>
   );
 }

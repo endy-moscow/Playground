@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'StratosLCG-Bold';
+  src: url('/fonts/StratosLCG-bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'StratosLCG-Semibold';
+  src: url('/fonts/StratosLCG-semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+}
+
 @layer base {
   * {
     box-sizing: border-box;
