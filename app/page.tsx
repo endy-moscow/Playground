@@ -1,18 +1,21 @@
-// page.tsx
 'use client';
 
 import { Html } from '@react-three/drei';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
-// Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Image from 'next/image';
-
-// Import Swiper styles
 import 'swiper/css';
 import { Autoplay, EffectCreative } from 'swiper/modules';
-
-
+import VideoCallFloor from '../src/components/canvas/VideoCallFloor';
+import SendFileFloor from '../src/components/canvas/SendFileFloor';
+import MapFloor from '@/components/canvas/MapFloor';
+import GameFloor from '@/components/dom/GameFloor';
+import SpeedFloor from '@/components/dom/SpeedFloor';
+import StableConnectionFloor from '@/components/dom/StableConnectionFloor';
+import SubscriptionFloor from '@/components/dom/SubscriptionFloor';
+import FAQFloor from '@/components/dom/FAQFloor';
+import Footer from '@/components/dom/Footer';
 // Динамические импорты
 const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.View), {
   ssr: false,
@@ -47,7 +50,7 @@ export default function Page() {
           className="mb-10"
         />
         <h1 className="max-w-7xl text-center font-stratos text-8xl font-bold uppercase leading-tight">
-          быстрая и стабильная связь для всей семьи
+          быстрая и стабильная связь для всей семьи
         </h1>
 
         <Swiper
@@ -65,8 +68,6 @@ export default function Page() {
           }}
           slidesPerView={1}
           className="my-24 w-8/12 text-4xl"
-          // centeredSlides={true}
-          // direction={'vertical'}
           autoplay={{
             delay: 4500,
             disableOnInteraction: false,
@@ -100,18 +101,37 @@ export default function Page() {
           </SwiperSlide>
         </Swiper>
 
-        <button className="rounded-lg bg-white px-12 py-6 text-3xl text-altel">
+        <button className="rounded-lg bg-white px-12 py-6 text-xl text-altel">
           Узнать больше
         </button>
-
-      </div>
-      <div className="flex h-screen w-full items-center justify-center">
-        <h1>Second</h1>
-      </div>
-      <div className="flex h-screen w-full items-center justify-center">
-        <h1>Third</h1>
       </div>
 
+      {/* Second Floor */}
+      <VideoCallFloor />
+
+      {/* Third Floor*/}
+      <SendFileFloor />
+
+      {/* Fourth Floor */}
+      <MapFloor />
+
+      {/* Fifth Floor */}
+      <GameFloor />
+
+      {/* Sixth Floor */}
+      <SpeedFloor />
+
+      {/* Seventh Floor */}
+      <StableConnectionFloor />
+
+      {/* Eighth Floor */}
+      <SubscriptionFloor />
+
+      {/* Ninth Floor */}
+      <FAQFloor />
+
+      <Footer />
     </>
   );
 }
+

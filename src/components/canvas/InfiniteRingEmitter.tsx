@@ -5,7 +5,7 @@ import { useCursor, Html } from '@react-three/drei';
 import { Leva, useControls } from 'leva';
 import * as THREE from 'three';
 import { TextureLoader } from 'three';
-
+import usePostProcess from '@/templates/hooks/usePostprocess'
 const InfiniteRingEmitter = () => {
   const tunnelRef = useRef<THREE.Mesh<THREE.TubeGeometry, THREE.MeshStandardMaterial>>(null);
   const { size, camera } = useThree();
@@ -27,9 +27,9 @@ const InfiniteRingEmitter = () => {
     CURVE_TWISTS,
     POSITION_Z
   } = useControls({
-    TUNNEL_RADIUS: { value: 10, min: 10, max: 100, step: 1 },
-    TUNNEL_LENGTH: { value: 1000, min: 500, max: 2000, step: 10 },
-    SEGMENTS: { value: 500, min: 100, max: 1000, step: 10 },
+    TUNNEL_RADIUS: { value: 24, min: 10, max: 100, step: 1 },
+    TUNNEL_LENGTH: { value: 2000, min: 500, max: 2000, step: 10 },
+    SEGMENTS: { value: 30, min: 0, max: 1000, step: 10 },
     TUNNEL_SPEED: { value: { x: 0.1, y: 0.07 }, joystick: 'invertY' },
     TEXTURE_REPEAT: { value: { x: 0.01, y: 7 }, joystick: 'invertY' },
     AUTO_ROTATE_SPEED: { value: 0.1, min: 0.1, max: 2, step: 0.01 },
@@ -37,11 +37,11 @@ const InfiniteRingEmitter = () => {
     CURVE_AMPLITUDE_START: { value: 0, min: 0, max: 100, step: 1 },
     CURVE_AMPLITUDE_END: { value: 64, min: 0, max: 100, step: 1 },
     CURVE_TWISTS: { value: 1, min: 1, max: 10, step: 1 },
-    POSITION_Z: { value: -999, min: -2000, max: 0, step: 10 }
+    POSITION_Z: { value: -1800, min: -2000, max: 0, step: 10 }
   });
 
   useCursor(hovered, 'pointer', 'auto');
-
+  usePostProcess()
   // Texture settings
   texture.wrapS = THREE.MirroredRepeatWrapping;
   texture.wrapT = THREE.MirroredRepeatWrapping;
