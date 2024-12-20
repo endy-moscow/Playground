@@ -3,7 +3,7 @@ import Image from 'next/image';
 const VideoCallFloor = () => {
 
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center gap-8 bg-gray-100 pb-24 text-center leading-relaxed">
+    <div className="flex h-fit w-full flex-col items-center justify-center gap-8 bg-gray-100 p-48 text-center leading-relaxed">
       <h1 className="flex w-2/4 flex-col items-center justify-center font-stratos text-6xl">
         Разговаривайте по видео без задержек и зависаний
       </h1>

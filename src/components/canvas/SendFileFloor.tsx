@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 const SendFileFloor = () => {
   return (
-    <div className="flex h-screen w-full flex-row items-center justify-center gap-12 bg-white px-4">
+    <div className="flex h-fit w-full flex-row items-center justify-center gap-12 bg-white p-48 py-96">
       {/* Left Section */}
       <div className="flex flex-col gap-4">
         {/* Video Bubble */}
@@ -13,7 +13,7 @@ const SendFileFloor = () => {
             alt="Снежные горы"
             layout="fill"
             objectFit="cover"
-            className="rounded-t-[15px]"
+            className="rounded-[15px]"
           />
           <div className="absolute bottom-0 w-full rounded-b-[15px] bg-[#007AFF] p-3">
             <p className="text-[14px] text-white">Привет, мам! Смотри, где я 🤩</p>
@@ -22,7 +22,7 @@ const SendFileFloor = () => {
 
         {/* Chat Bubbles */}
         <div className="flex flex-row items-start gap-2">
-          <div className="max-w-[200px] rounded-[15px] bg-[#E6E5EB] p-3 text-black">
+          <div className="rounded-[15px] bg-[#E6E5EB] p-3 text-black">
             <p className="text-[14px] leading-snug">
               вааау, как красиво!!!
               <br />
@@ -32,13 +32,13 @@ const SendFileFloor = () => {
         </div>
 
         <div className="flex flex-row justify-end gap-2">
-          <div className="max-w-[80px] rounded-[15px] bg-[#007AFF] p-3 text-white">
+          <div className="rounded-[15px] bg-[#007AFF] p-3 text-white">
             <p className="text-[14px]">❤️❤️❤️</p>
           </div>
         </div>
 
         <div className="flex flex-row items-start gap-2">
-          <div className="max-w-[80px] rounded-[15px] bg-[#E6E5EB] p-3 text-black">
+          <div className="rounded-[15px] bg-[#E6E5EB] p-3 text-black">
             <p className="text-[14px]">❤️❤️❤️</p>
           </div>
         </div>

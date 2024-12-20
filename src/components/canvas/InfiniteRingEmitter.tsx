@@ -41,7 +41,7 @@ const InfiniteRingEmitter = () => {
   });
 
   useCursor(hovered, 'pointer', 'auto');
-  usePostProcess()
+  const postprocess = usePostProcess()
   // Texture settings
   texture.wrapS = THREE.MirroredRepeatWrapping;
   texture.wrapT = THREE.MirroredRepeatWrapping;
@@ -105,7 +105,7 @@ const InfiniteRingEmitter = () => {
 
   return (
     <>
-
+      {postprocess}
       <mesh
         ref={tunnelRef}
         position={[0, 0, POSITION_Z]}
