@@ -37,7 +37,7 @@ export default function Page() {
       <View className="relative size-full">
         <Suspense fallback={null}>
           <InfiniteRingEmitter />
-          <Common color="#E72487" />
+          <Common color={'#E72487'} />
         </Suspense>
       </View>
       <div className="absolute inset-0 z-50 h-screen w-full bg-altel mix-blend-color"></div>
