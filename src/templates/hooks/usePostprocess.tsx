@@ -8,19 +8,16 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
 const usePostProcess = () => {
   const { gl, scene, camera, size } = useThree()
   const composer = useMemo(() => {
-    // Create EffectComposer
     const composer = new EffectComposer(gl)
 
-    // Render pass for rendering scene
     const renderPass = new RenderPass(scene, camera)
     composer.addPass(renderPass)
 
-    // Custom ShaderPass for magenta overlay
     const overlayPass = new ShaderPass({
       uniforms: {
         tDiffuse: { value: null },
-        color: { value: new THREE.Color('#E72487') },
-        opacity: { value: 0.5 }, // Transparency for the overlay
+        color: { value: new THREE.Color(231 / 255, 36 / 255, 135 / 255) },
+        opacity: { value: 0.5 },
       },
       vertexShader: `
         varying vec2 vUv;
