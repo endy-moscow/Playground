@@ -7,9 +7,9 @@ const GameFloor = () => {
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-8 bg-white px-4">
       {/* Title Section */}
-      <h1 className="text-black text-center font-stratos text-5xl font-bold">
+      <h3 className="text-center font-stratos text-5xl font-bold text-black">
         Играйте и выигрывайте
-      </h1>
+      </h3>
 
       {/* Content Section */}
       <div className="flex w-full max-w-screen-xl flex-row items-center justify-center gap-12">
