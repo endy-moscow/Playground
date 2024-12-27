@@ -6,6 +6,8 @@ import { Leva, useControls } from 'leva';
 import * as THREE from 'three';
 import { TextureLoader } from 'three';
 import usePostProcess from '@/templates/hooks/usePostprocess'
+import ParticleSystem from './ParticleSystem';
+
 const InfiniteRingEmitter = () => {
   const tunnelRef = useRef<THREE.Mesh<THREE.TubeGeometry, THREE.MeshStandardMaterial>>(null);
   const { size, camera } = useThree();
@@ -42,6 +44,7 @@ const InfiniteRingEmitter = () => {
 
   useCursor(hovered, 'pointer', 'auto');
   const postprocess = usePostProcess()
+
   // Texture settings
   texture.wrapS = THREE.MirroredRepeatWrapping;
   texture.wrapT = THREE.MirroredRepeatWrapping;
@@ -105,7 +108,7 @@ const InfiniteRingEmitter = () => {
 
   return (
     <>
-      {postprocess}
+      <ParticleSystem />
       <mesh
         ref={tunnelRef}
         position={[0, 0, POSITION_Z]}

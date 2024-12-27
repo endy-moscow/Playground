@@ -1,16 +1,12 @@
 'use client';
 
-import { Html } from '@react-three/drei';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import Image from 'next/image';
 import 'swiper/css';
-import { Autoplay, EffectCreative } from 'swiper/modules';
-import HeroFloor from '../src/components/canvas/HeroFloor';
-import VideoCallFloor from '../src/components/canvas/VideoCallFloor';
-import SendFileFloor from '../src/components/canvas/SendFileFloor';
-import MapFloor from '@/components/canvas/MapFloor';
+import HeroFloor from '@/components/dom/HeroFloor';
+import VideoCallFloor from '@/components/dom/VideoCallFloor';
+import SendFileFloor from '@/components/dom/SendFileFloor';
+import MapFloor from '@/components/dom/MapFloor';
 import GameFloor from '@/components/dom/GameFloor';
 import SpeedFloor from '@/components/dom/SpeedFloor';
 import StableConnectionFloor from '@/components/dom/StableConnectionFloor';
@@ -34,6 +30,8 @@ const InfiniteRingEmitter = dynamic(() => import('../src/components/canvas/Infin
 export default function Page() {
   return (
     <>
+
+      {/* Hero */}
       <View className="relative size-full">
         <Suspense fallback={null}>
           <InfiniteRingEmitter />
@@ -41,7 +39,6 @@ export default function Page() {
         </Suspense>
       </View>
       <div className="absolute inset-0 z-50 h-screen w-full bg-altel mix-blend-color"></div>
-
 
       {/* First Floor */}
       <HeroFloor />

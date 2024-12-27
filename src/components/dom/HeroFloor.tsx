@@ -33,7 +33,7 @@ const HeroFloor = () => {
           },
         }}
         slidesPerView={1}
-        className="my-12 w-10/12 md:my-16 lg:w-8/12"
+        className="my-12 w-10/12 text-5xl md:my-16 lg:w-8/12"
         autoplay={{
           delay: 4500,
           disableOnInteraction: false,
@@ -41,36 +41,36 @@ const HeroFloor = () => {
         modules={[Autoplay, EffectCreative]}
       >
         <SwiperSlide className="flex items-center justify-center">
-          <p className="w-full text-center text-base sm:text-lg lg:text-xl">
+          <p className="w-full text-center ">
             Стабильная связь без помех
           </p>
         </SwiperSlide>
         <SwiperSlide className="flex items-center justify-center">
-          <p className="w-full text-center text-base sm:text-lg lg:text-xl">
+          <p className="w-full text-center">
             Сверхскоростной интернет
           </p>
         </SwiperSlide>
         <SwiperSlide className="flex items-center justify-center">
-          <p className="w-full text-center text-base sm:text-lg lg:text-xl">
+          <p className="w-full text-center">
             Быстрая загрузка и отправка файлов
           </p>
         </SwiperSlide>
         <SwiperSlide className="flex items-center justify-center">
-          <p className="w-full text-center text-base sm:text-lg lg:text-xl">
+          <p className="w-full text-center">
             Минимальный пинг в играх
           </p>
         </SwiperSlide>
         <SwiperSlide className="flex items-center justify-center">
-          <p className="w-full text-center text-base sm:text-lg lg:text-xl">
+          <p className="w-full text-center">
             Без проседаний скорости по вечерам
           </p>
         </SwiperSlide>
       </Swiper>
 
-      <button className="rounded-lg bg-white px-8 py-4 text-sm text-altel sm:px-12 sm:py-6 sm:text-xl">
+      <button className="rounded-lg bg-white px-8 py-4 text-sm font-bold text-altel sm:px-12 sm:py-6 sm:text-xl">
         Узнать больше
       </button>
-    </div>
+    </div >
   );
 };
 

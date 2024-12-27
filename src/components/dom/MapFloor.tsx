@@ -18,7 +18,8 @@ const MapFloor = () => {
 
       {/* Select Dropdown */}
       <div className="mb-8">
-        <select className="w-40 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 focus:outline-none">
+        <label htmlFor="city-select" className="sr-only">Select City</label>
+        <select id="city-select" className="w-40 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 focus:outline-none">
           <option value="almaty">Алматы</option>
         </select>
       </div>
