@@ -1,11 +1,50 @@
 'use client';
 
+import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Image from 'next/image';
 import 'swiper/css';
 import { Autoplay, EffectCreative } from 'swiper/modules';
+import { AnimatePresence, motion, useInView } from "motion/react";
+
+export function RotateWords({
+  text = "Rotate",
+  words = ["1", "2", "3", "4", "5"],
+}: {
+  text: string
+  words: string[]
+}) {
+  const [index, setIndex] = React.useState(0)
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % words.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
+  return (
+
+    <div className="flex w-fit items-center justify-center gap-1.5 pb-24 text-center font-stratos text-2xl font-bold uppercase tracking-wide lg:text-4xl">
+      {text}{' '}
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={words[index]}
+          initial={{ filter: 'blur(20px)', opacity: 0 }}
+          animate={{ filter: 'blur(0px)', opacity: 1 }}
+          exit={{ filter: 'blur(100px)', opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {words[index]}
+        </motion.p>
+      </AnimatePresence>
+    </div >
+  )
+}
 
 const HeroFloor = () => {
+  const ref = React.useRef(null)
+  const isInView = useInView(ref, { once: true })
+
   return (
     <div className="absolute inset-0 z-50 flex h-screen w-full flex-col items-center justify-center px-4 text-white">
       <Image
@@ -13,63 +52,34 @@ const HeroFloor = () => {
         width={240}
         height={50}
         alt="Logo"
-        className="mb-6 sm:w-36 lg:w-48"
+        className="mb-16 sm:w-36 lg:w-48 "
       />
-      <h1 className="max-w-6xl text-center font-stratos text-3xl font-bold uppercase leading-tight md:text-6xl lg:text-8xl">
-        быстрая и&nbsp;стабильная связь для&nbsp;всей семьи
+      <h1 className="mb-8 px-24 text-center font-stratos text-5xl font-bold uppercase sm:text-6xl lg:text-8xl">
+        связь для&nbsp;всей семьи
       </h1>
+      <RotateWords words={[
+        "Стабильная связь без помех",
+        "Сверхскоростной интернет",
+        "Быстрая загрузка и отправка файлов",
+        "Сверхскоростной интернет",
+        "Без проседаний скорости по вечерам"
+      ]} text={''} />
 
-      <Swiper
-        spaceBetween={10}
-        effect={'creative'}
-        creativeEffect={{
-          prev: {
-            translate: [0, -40, 0],
-            opacity: 0,
-          },
-          next: {
-            translate: [0, -40, 0],
-            opacity: 0,
-          },
-        }}
-        slidesPerView={1}
-        className="my-12 w-10/12 text-5xl md:my-16 lg:w-8/12"
-        autoplay={{
-          delay: 4500,
-          disableOnInteraction: false,
-        }}
-        modules={[Autoplay, EffectCreative]}
-      >
-        <SwiperSlide className="flex items-center justify-center">
-          <p className="w-full text-center ">
-            Стабильная связь без помех
-          </p>
-        </SwiperSlide>
-        <SwiperSlide className="flex items-center justify-center">
-          <p className="w-full text-center">
-            Сверхскоростной интернет
-          </p>
-        </SwiperSlide>
-        <SwiperSlide className="flex items-center justify-center">
-          <p className="w-full text-center">
-            Быстрая загрузка и отправка файлов
-          </p>
-        </SwiperSlide>
-        <SwiperSlide className="flex items-center justify-center">
-          <p className="w-full text-center">
-            Минимальный пинг в играх
-          </p>
-        </SwiperSlide>
-        <SwiperSlide className="flex items-center justify-center">
-          <p className="w-full text-center">
-            Без проседаний скорости по вечерам
-          </p>
-        </SwiperSlide>
-      </Swiper>
 
-      <button className="rounded-lg bg-white px-8 py-4 text-sm font-bold text-altel sm:px-12 sm:py-6 sm:text-xl">
-        Узнать больше
-      </button>
+      <a href="#1">
+        <motion.button
+          className="rounded-lg bg-white/60 px-8  py-4 font-stratos text-sm font-bold uppercase text-black backdrop-blur-md hover:bg-white/95 active:bg-white/95 sm:px-12 sm:py-6 sm:text-xl"
+          transition={{ duration: 0.3 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          whileTap={{
+            scale: 0.97,
+            transition: { duration: 0.15 },
+          }}
+        >
+          Узнать больше
+        </motion.button>
+      </a>
     </div >
   );
 };

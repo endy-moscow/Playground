@@ -2,7 +2,7 @@ import React from 'react';
 
 const MapFloor = () => {
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-start bg-white px-4 py-12">
+    <div className="flex w-full flex-col items-center justify-start bg-white px-4 py-12">
       {/* Heading Section */}
       <div className="mb-8 text-center">
         <h1 className="font-stratos text-5xl font-bold leading-tight">

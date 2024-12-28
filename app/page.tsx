@@ -8,7 +8,7 @@ import VideoCallFloor from '@/components/dom/VideoCallFloor';
 import SendFileFloor from '@/components/dom/SendFileFloor';
 import MapFloor from '@/components/dom/MapFloor';
 import GameFloor from '@/components/dom/GameFloor';
-import SpeedFloor from '@/components/dom/SpeedFloor';
+// import SpeedFloor from '@/components/dom/SpeedFloor';
 import StableConnectionFloor from '@/components/dom/StableConnectionFloor';
 import SubscriptionFloor from '@/components/dom/SubscriptionFloor';
 import FAQFloor from '@/components/dom/FAQFloor';
@@ -32,42 +32,51 @@ export default function Page() {
     <>
 
       {/* Hero */}
+
       <View className="relative size-full">
         <Suspense fallback={null}>
           <InfiniteRingEmitter />
           <Common color={'#E72487'} />
         </Suspense>
       </View>
-      <div className="absolute inset-0 z-50 h-screen w-full bg-altel mix-blend-color"></div>
 
-      {/* First Floor */}
-      <HeroFloor />
 
-      {/* Second Floor */}
-      <VideoCallFloor />
+      {/* Mask */}
+      <div className='scroll-smooth antialiased'>
+        <div className="absolute inset-0 z-50 h-screen w-full bg-altel mix-blend-color"></div>
 
-      {/* Third Floor*/}
-      <SendFileFloor />
+        {/* First Floor */}
+        <HeroFloor />
 
-      {/* Fourth Floor */}
-      <MapFloor />
+        {/* Second Floor */}
+        {/* <VideoCallFloor /> */}
+        {/* <SpeedFloor /> */}
 
-      {/* Fifth Floor */}
-      <GameFloor />
 
-      {/* Sixth Floor */}
-      <SpeedFloor />
 
-      {/* Seventh Floor */}
-      <StableConnectionFloor />
+        {/* Third Floor*/}
+        <SendFileFloor />
 
-      {/* Eighth Floor */}
-      <SubscriptionFloor />
+        {/* Fourth Floor */}
+        <MapFloor />
 
-      {/* Ninth Floor */}
-      <FAQFloor />
+        {/* Fifth Floor */}
+        <GameFloor />
 
-      <Footer />
+        {/* Sixth Floor */}
+        {/* <SpeedFloor /> */}
+
+        {/* Seventh Floor */}
+        <StableConnectionFloor />
+
+        {/* Eighth Floor */}
+        <SubscriptionFloor />
+
+        {/* Ninth Floor */}
+        <FAQFloor />
+
+        <Footer />
+      </div>
     </>
   );
 }

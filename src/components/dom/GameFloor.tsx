@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 const GameFloor = () => {
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center gap-8 bg-white px-4">
+    <div className="flex w-full flex-col items-center justify-center gap-8 bg-white px-4">
       {/* Title Section */}
       <h3 className="text-center font-stratos text-5xl font-bold text-black">
         Играйте и выигрывайте

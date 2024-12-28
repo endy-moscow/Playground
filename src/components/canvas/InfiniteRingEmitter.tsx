@@ -6,7 +6,6 @@ import { Leva, useControls } from 'leva';
 import * as THREE from 'three';
 import { TextureLoader } from 'three';
 import usePostProcess from '@/templates/hooks/usePostprocess'
-import ParticleSystem from './ParticleSystem';
 
 const InfiniteRingEmitter = () => {
   const tunnelRef = useRef<THREE.Mesh<THREE.TubeGeometry, THREE.MeshStandardMaterial>>(null);
@@ -108,7 +107,6 @@ const InfiniteRingEmitter = () => {
 
   return (
     <>
-      <ParticleSystem />
       <mesh
         ref={tunnelRef}
         position={[0, 0, POSITION_Z]}
