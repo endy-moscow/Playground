@@ -25,8 +25,6 @@ const GameFloor = () => {
           <Image
             src="/img/example.jpg"
             alt="Пример видео"
-            layout="fill"
-            objectFit="cover"
             className="rounded-xl"
           />
           <div className="absolute left-4 top-4 rounded bg-pink-500 px-2 py-1 text-xs font-bold text-white">
