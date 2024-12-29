@@ -44,7 +44,7 @@ export default function Page() {
         <HeroFloor />
 
         {/* Second Floor */}
-        <VideoCallFloor />
+        {/* <VideoCallFloor /> */}
         <SpeedFloor />
 
         {/* Third Floor*/}
