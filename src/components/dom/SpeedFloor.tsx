@@ -15,7 +15,15 @@ const SpeedFloor = () => {
 
       <div className='flex flex-row items-center justify-center gap-12'>
         <div className='flex flex-col items-center gap-2'>
-          <Lottie4G />
+          <div className='relative flex size-72 items-center justify-center'>
+            <Lottie4G />
+            <div className='absolute text-center'>
+              <p className=' font-bold text-gray-400'>5G</p>
+              <p className='font-mono text-4xl font-bold'>150</p>
+              <p className=' text-gray-400'>Мбит/с</p>
+            </div>
+          </div>
+
           <p className=' text-sm text-gray-500'>
             Фильм в 4K скачается <br />
             за <span className='font-bold'>50 минут</span>
@@ -30,7 +38,14 @@ const SpeedFloor = () => {
         </div>
 
         <div className='flex flex-col items-center gap-2'>
-          <Lottie5G />
+          <div className='relative flex size-72 items-center justify-center'>
+            <Lottie5G />
+            <div className='absolute text-center'>
+              <p className=' font-bold text-gray-400'>5G</p>
+              <p className='font-mono text-4xl font-bold'>1500</p>
+              <p className=' text-gray-400'>Мбит/с</p>
+            </div>
+          </div>
           <p className='text-sm text-gray-500'>
             Фильм в 4K скачается <br />
             за <span className='font-bold'>5 минут</span>

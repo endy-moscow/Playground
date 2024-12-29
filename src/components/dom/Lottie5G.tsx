@@ -11,8 +11,6 @@ const Lottie5G = () => {
   const lottieObj = useLottie(options)
   const Animation = useLottieInteractivity({
     lottieObj,
-    player: '#fourthLottie',
-    mode: 'scroll',
     actions: [
       {
         visibility: [0.0, 0.5],
@@ -27,16 +25,7 @@ const Lottie5G = () => {
     ],
   })
 
-  return (
-    <div className='relative flex size-72 items-center justify-center'>
-      {Animation}
-      <div className='absolute text-center'>
-        <p className=' font-bold text-gray-400'>5G</p>
-        <p className='font-mono text-4xl font-bold'>1500</p>
-        <p className=' text-gray-400'>Мбит/с</p>
-      </div>
-    </div>
-  )
+  return Animation
 }
 
 export default Lottie5G

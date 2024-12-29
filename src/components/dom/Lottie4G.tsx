@@ -5,15 +5,16 @@ import lottie4GData from './speed-data-4g.json'
 const Lottie4G = () => {
   const options = {
     animationData: lottie4GData,
+    loop: false,
+    autoplay: true,
   }
-
-  const lottie4G = useLottie(options)
-  const lottie4GInteractive = useLottieInteractivity({
-    lottieObj: lottie4G,
+  const lottieObj = useLottie(options)
+  const Animation = useLottieInteractivity({
+    lottieObj,
     actions: [
       {
-        visibility: [0, 0.5],
-        type: 'seek',
+        visibility: [0.0, 0.5],
+        type: 'stop',
         frames: [0, 29],
       },
       {
@@ -24,16 +25,7 @@ const Lottie4G = () => {
     ],
   })
 
-  return (
-    <div className='relative flex size-72 items-center justify-center'>
-      {lottie4GInteractive}
-      <div className='absolute text-center'>
-        <p className=' font-bold text-gray-400'>4G</p>
-        <p className='font-mono text-4xl font-bold'>150</p>
-        <p className=' text-gray-400'>Мбит/с</p>
-      </div>
-    </div>
-  )
+  return Animation
 }
 
 export default Lottie4G
