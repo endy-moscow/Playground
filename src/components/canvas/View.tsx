@@ -4,12 +4,11 @@ import { forwardRef, Suspense, useImperativeHandle, useRef } from 'react'
 import { PerspectiveCamera, View as ViewImpl } from '@react-three/drei'
 import { Three } from '@/helpers/components/Three'
 
-
 export const Common = ({ color }) => (
   <Suspense fallback={null}>
     {color && <color attach='background' args={[color]} />}
-    <ambientLight intensity={2} />
-    <pointLight position={[0, 0, 100]} intensity={700} color='#E72487' decay={1} />
+    <ambientLight intensity={1} />
+    <pointLight position={[0, 0, -2000]} intensity={5000} color='altel' decay={1} />
     <PerspectiveCamera makeDefault fov={40} position={[0, 0, 0]} />
   </Suspense>
 )
@@ -27,10 +26,7 @@ const View = forwardRef<HTMLDivElement, ViewProps>(({ children, ...props }, ref)
     <>
       <div ref={localRef} {...props} />
       <Three>
-        <ViewImpl track={localRef}>
-          {children}
-
-        </ViewImpl>
+        <ViewImpl track={localRef}>{children}</ViewImpl>
       </Three>
     </>
   )

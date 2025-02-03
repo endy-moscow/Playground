@@ -47,7 +47,7 @@ module.exports = {
     extend: {
       scrollBehavior: ['smooth'], // Включить smooth scrolling
       fontFamily: {
-        stratos: ['StratosLCG-SemiBold', ...defaultTheme.fontFamily.sans],
+        stratos: ['StratosLCG-Bold', ...defaultTheme.fontFamily.sans],
       },
       animation: {
         hexagon: 'moveOut 3s linear infinite',

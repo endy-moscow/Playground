@@ -33,10 +33,10 @@ export default function Page() {
       <View className='relative size-full'>
         <Suspense fallback={null}>
           <InfiniteRingEmitter />
-          <Common color={'#E72487'} />
+          <Common color={'#000'} />
         </Suspense>
       </View>
-      <div className='absolute inset-0 z-10 h-screen w-full bg-altel mix-blend-color'></div>
+      {/* <div className='absolute inset-0 z-10 h-screen w-full bg-altel mix-blend-color'></div> */}
 
       {/* Mask */}
       <div className='scroll-smooth antialiased'>
