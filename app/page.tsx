@@ -36,12 +36,12 @@ export default function Page() {
           <Common color={'#E72487'} />
         </Suspense>
       </View>
-      {/* <div className='absolute inset-0 z-10 h-screen w-full bg-altel mix-blend-color'></div> */}
+      <div className='absolute inset-0 z-10 h-screen w-full bg-altel mix-blend-color'></div>
 
       {/* Mask */}
       <div className='scroll-smooth antialiased'>
         {/* First Floor */}
-        {/* <HeroFloor /> */}
+        <HeroFloor />
 
         {/* Second Floor */}
         {/* <VideoCallFloor /> */}

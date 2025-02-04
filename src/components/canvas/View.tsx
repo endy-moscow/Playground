@@ -1,7 +1,7 @@
 'use client'
 
 import { forwardRef, Suspense, useImperativeHandle, useRef, useEffect } from 'react'
-import { PerspectiveCamera, View as ViewImpl, Fisheye } from '@react-three/drei'
+import { PerspectiveCamera, View as ViewImpl, Fisheye, SpotLight } from '@react-three/drei'
 import { Three } from '@/helpers/components/Three'
 import { Leva, useControls } from 'leva'
 
@@ -18,12 +18,12 @@ export const Common = ({ color: bgColorProp }) => {
     cameraPosition,
     backgroundColor,
   } = useControls('Scene Settings', {
-    ambientIntensity: { value: 0.1, min: 0, max: 5, step: 0.1 },
-    pointLightIntensity: { value: 1000, min: 0, max: 10000, step: 50 },
-    pointLightPosition: { value: [200, 0, -1000] },
+    ambientIntensity: { value: 0.7, min: 0, max: 5, step: 0.1 },
+    pointLightIntensity: { value: 0, min: 0, max: 10000, step: 50 },
+    pointLightPosition: { value: [0, 0, -300] },
     pointLightColor: { value: '#E72487' },
-    secondPointLightIntensity: { value: 500, min: 0, max: 10000, step: 50 },
-    secondPointLightPosition: { value: [0, 0, -900] },
+    secondPointLightIntensity: { value: 0, min: 0, max: 10000, step: 50 },
+    secondPointLightPosition: { value: [0, 0, -280] },
     secondPointLightColor: { value: '#E72487' },
     cameraFov: { value: 70, min: 10, max: 100, step: 1 },
     cameraPosition: { value: [0, 0, 0] },
@@ -41,6 +41,7 @@ export const Common = ({ color: bgColorProp }) => {
         color={secondPointLightColor}
         decay={1}
       />
+
       <PerspectiveCamera makeDefault fov={cameraFov} position={cameraPosition} />
     </Suspense>
   )
@@ -60,9 +61,7 @@ const View = forwardRef<HTMLDivElement, ViewProps>(({ children, ...props }, ref)
       <Leva collapsed={false} />
       <div ref={localRef} {...props} />
       <Three>
-        <Fisheye zoom={0}>
-          <ViewImpl track={localRef}>{children}</ViewImpl>
-        </Fisheye>
+        <ViewImpl track={localRef}>{children}</ViewImpl>
       </Three>
     </>
   )
