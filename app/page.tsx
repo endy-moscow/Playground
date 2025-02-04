@@ -41,7 +41,7 @@ export default function Page() {
       {/* Mask */}
       <div className='scroll-smooth antialiased'>
         {/* First Floor */}
-        <HeroFloor />
+        {/* <HeroFloor /> */}
 
         {/* Second Floor */}
         {/* <VideoCallFloor /> */}
