@@ -18,7 +18,7 @@ export const Common = ({ color: bgColorProp }) => {
     cameraPosition,
     backgroundColor,
   } = useControls('Scene Settings', {
-    ambientIntensity: { value: 0.7, min: 0, max: 5, step: 0.1 },
+    ambientIntensity: { value: 3, min: 0, max: 5, step: 0.1 },
     pointLightIntensity: { value: 0, min: 0, max: 10000, step: 50 },
     pointLightPosition: { value: [0, 0, -300] },
     pointLightColor: { value: '#E72487' },

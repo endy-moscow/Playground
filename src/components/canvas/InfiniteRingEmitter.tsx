@@ -29,7 +29,7 @@ const InfiniteRingEmitter = () => {
     TUNNEL_RADIUS: { value: 10, min: 10, max: 100, step: 1 },
     TUNNEL_LENGTH: { value: 1000, min: 500, max: 2000, step: 10 },
     SEGMENTS: { value: 300, min: 100, max: 1000, step: 10 },
-    TUNNEL_SPEED: { value: { x: 0.1, y: 0 }, joystick: 'invertY' },
+    TUNNEL_SPEED: { value: { x: 0.24, y: 0 }, joystick: 'invertY' },
     TEXTURE_REPEAT: { value: { x: 1, y: 1.5 }, joystick: 'invertY' },
     AUTO_ROTATE_SPEED: { value: 0.1, min: 0.1, max: 2, step: 0.01 },
     CURVE_AMPLITUDE_START: { value: 0, min: 0, max: 100, step: 1 },
