@@ -11,9 +11,7 @@ export const Common = ({ color: bgColorProp }) => {
     pointLightIntensity,
     pointLightPosition,
     pointLightColor,
-    secondPointLightIntensity,
-    secondPointLightPosition,
-    secondPointLightColor,
+
     cameraFov,
     cameraPosition,
     backgroundColor,
@@ -22,12 +20,10 @@ export const Common = ({ color: bgColorProp }) => {
     pointLightIntensity: { value: 0, min: 0, max: 10000, step: 50 },
     pointLightPosition: { value: [0, 0, -300] },
     pointLightColor: { value: '#E72487' },
-    secondPointLightIntensity: { value: 0, min: 0, max: 10000, step: 50 },
-    secondPointLightPosition: { value: [0, 0, -280] },
-    secondPointLightColor: { value: '#E72487' },
-    cameraFov: { value: 70, min: 10, max: 100, step: 1 },
+
+    cameraFov: { value: 35, min: 10, max: 100, step: 1 },
     cameraPosition: { value: [0, 0, 0] },
-    backgroundColor: { value: bgColorProp || '#E72487' },
+    backgroundColor: { value: bgColorProp || '#000' },
   })
 
   return (
@@ -35,13 +31,6 @@ export const Common = ({ color: bgColorProp }) => {
       <color attach='background' args={[backgroundColor]} />
       <ambientLight intensity={ambientIntensity} color={pointLightColor} />
       <pointLight position={pointLightPosition} intensity={pointLightIntensity} color={pointLightColor} decay={1} />
-      <pointLight
-        position={secondPointLightPosition}
-        intensity={secondPointLightIntensity}
-        color={secondPointLightColor}
-        decay={1}
-      />
-
       <PerspectiveCamera makeDefault fov={cameraFov} position={cameraPosition} />
     </Suspense>
   )

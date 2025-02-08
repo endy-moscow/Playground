@@ -13,10 +13,11 @@ import StableConnectionFloor from '@/components/dom/StableConnectionFloor'
 import SubscriptionFloor from '@/components/dom/SubscriptionFloor'
 import FAQFloor from '@/components/dom/FAQFloor'
 import Footer from '@/components/dom/Footer'
+import { Fisheye } from '@react-three/drei'
 // Динамические импорты
 const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.View), {
   ssr: false,
-  loading: () => <div className='flex size-full items-center justify-center bg-altel' />,
+  loading: () => <div className='flex size-full items-center justify-center bg-black' />,
 })
 
 const Common = dynamic(() => import('@/components/canvas/View').then((mod) => mod.Common), {
@@ -33,10 +34,10 @@ export default function Page() {
       <View className='relative size-full'>
         <Suspense fallback={null}>
           <InfiniteRingEmitter />
-          <Common color={'#E72487'} />
+          <Common color={'#000'} />
         </Suspense>
       </View>
-      {/* <div className='absolute inset-0 z-10 h-screen w-full bg-altel mix-blend-color'></div> */}
+      <div className='absolute inset-0 z-10 h-screen w-full bg-altel mix-blend-color'></div>
 
       {/* Mask */}
       <div className='scroll-smooth antialiased'>
