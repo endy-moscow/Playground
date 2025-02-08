@@ -47,9 +47,9 @@ export default function Scroll({ children }) {
   }, [])
 
   return (
-    <div ref={wrapper} className='wrapper'>
-      <div ref={content} className='content'>
-        <div className='inner-content'>...</div>
+    <div ref={wrapper} className='size-full'>
+      <div ref={content} className='container mx-auto'>
+        <div className='p-4'>...</div>
         {children}
       </div>
     </div>

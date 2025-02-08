@@ -8,26 +8,10 @@ const Layout = ({ children }) => {
   const ref = useRef()
 
   return (
-    <div
-      ref={ref}
-      style={{
-        position: 'relative',
-        width: ' 100%',
-        height: '100%',
-        overflow: 'auto',
-        touchAction: 'auto',
-      }}
-    >
+    <div ref={ref} className='relative size-full touch-auto overflow-auto'>
       {children}
       <Scene
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          pointerEvents: 'none',
-        }}
+        className='pointer-events-none fixed left-0 top-0 h-screen w-screen'
         eventSource={ref}
         eventPrefix='client'
       />
