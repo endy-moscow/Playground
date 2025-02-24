@@ -42,7 +42,7 @@ export default function Page() {
       <motion.div
         initial={{ backgroundColor: 'rgba(0, 0, 0, 1)' }}
         animate={{ backgroundColor: 'rgba(231, 36, 135, 1)' }}
-        transition={{ duration: 1 }}
+        transition={{ duration: 1, delay: 1 }}
         className='absolute inset-0 z-10 h-screen w-full mix-blend-color'
       />
 
