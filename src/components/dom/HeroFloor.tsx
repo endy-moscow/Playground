@@ -1,10 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Swiper, SwiperSlide } from 'swiper/react'
 import Image from 'next/image'
-import 'swiper/css'
-import { Autoplay, EffectCreative } from 'swiper/modules'
 import { AnimatePresence, motion, useInView } from 'motion/react'
 
 export function RotateWords({ text = 'Rotate', words = ['1', '2', '3', '4', '5'] }: { text: string; words: string[] }) {
@@ -34,6 +31,30 @@ export function RotateWords({ text = 'Rotate', words = ['1', '2', '3', '4', '5']
   )
 }
 
+const AnimatedTitle = () => {
+  const words = ['Скоростной', 'мобильный интернет', 'для всей семьи']
+
+  return (
+    <h1 className='mb-8 px-24 text-center font-stratos uppercase sm:text-6xl lg:text-9xl lg:leading-[1.2]'>
+      {words.map((word, index) => (
+        <motion.span
+          key={index}
+          className='block'
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.5,
+            delay: index * 0.2, // Each word appears 0.2s after the previous
+            ease: [0.4, 0.0, 0.2, 1],
+          }}
+        >
+          {word}
+        </motion.span>
+      ))}
+    </h1>
+  )
+}
+
 const HeroFloor = () => {
   const ref = React.useRef(null)
   const isInView = useInView(ref, { once: true })
@@ -41,11 +62,7 @@ const HeroFloor = () => {
   return (
     <div className='absolute inset-0 z-50 flex h-screen w-full flex-col items-center justify-center px-4 text-white'>
       <Image src='/img/altel.svg' width={240} height={50} alt='Logo' className='mb-16 sm:w-36 lg:w-48 ' />
-      <h1 className='mb-8 px-24 text-center font-stratos  uppercase sm:text-6xl lg:text-9xl lg:leading-[1.2]'>
-        Скоростной <br />
-        мобильный интернет <br />
-        для&nbsp;всей семьи
-      </h1>
+      <AnimatedTitle />
       <RotateWords
         words={[
           'Стабильная связь без помех',

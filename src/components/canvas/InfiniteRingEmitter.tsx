@@ -9,135 +9,142 @@ const InfiniteRingEmitter = () => {
   const pointsRef = useRef<THREE.Points>(null)
   const { size } = useThree()
 
-  // Управление настройками через Leva для трубы и частиц
   const {
-    TUNNEL_RADIUS,
-    TUNNEL_LENGTH,
-    SEGMENTS,
-    TUNNEL_SPEED,
-    TEXTURE_REPEAT,
-    AUTO_ROTATE_SPEED,
-    CURVE_AMPLITUDE_START,
-    CURVE_AMPLITUDE_END,
-    CURVE_TWISTS,
-    POSITION_Z,
-    PARTICLE_COUNT,
-    PARTICLE_RANDOM_OFFSET,
-    // Новый параметр скорости движения частиц
-    PARTICLE_SPEED,
+    tunnelRadius,
+    tunnelLength,
+    segments,
+    tunnelSpeed,
+    textureRepeat,
+    autoRotateSpeed,
+    curveAmplitudeStart,
+    curveAmplitudeEnd,
+    curveTwists,
+    positionZ,
+    particleCount,
+    particleRandomOffset,
+    particleSpeed,
+    particleSize,
   } = useControls({
-    TUNNEL_RADIUS: { value: 10, min: 10, max: 100, step: 1 },
-    TUNNEL_LENGTH: { value: 1000, min: 500, max: 2000, step: 10 },
-    SEGMENTS: { value: 300, min: 100, max: 1000, step: 10 },
-    TUNNEL_SPEED: { value: { x: 0.24, y: 0 }, joystick: 'invertY' },
-    TEXTURE_REPEAT: { value: { x: 1, y: 1.5 }, joystick: 'invertY' },
-    AUTO_ROTATE_SPEED: { value: 0.1, min: 0.1, max: 2, step: 0.01 },
-    CURVE_AMPLITUDE_START: { value: 0, min: 0, max: 100, step: 1 },
-    CURVE_AMPLITUDE_END: { value: 64, min: 0, max: 100, step: 1 },
-    CURVE_TWISTS: { value: 1, min: 1, max: 10, step: 1 },
-    POSITION_Z: { value: -999, min: -2000, max: 0, step: 10 },
-    PARTICLE_COUNT: { value: 1000, min: 100, max: 5000, step: 100 },
-    PARTICLE_RANDOM_OFFSET: { value: 2, min: 0, max: 5, step: 0.1 },
-    PARTICLE_SPEED: { value: 0.05, min: 0, max: 0.5, step: 0.01 },
+    tunnelRadius: { value: 10, min: 10, max: 100, step: 1 },
+    tunnelLength: { value: 1000, min: 500, max: 2000, step: 10 },
+    segments: { value: 300, min: 100, max: 1000, step: 10 },
+    tunnelSpeed: { value: { x: 1, y: 0.01 }, joystick: 'invertY' },
+    textureRepeat: { value: { x: 1, y: 1 }, joystick: 'invertY' },
+    autoRotateSpeed: { value: 0, min: 0, max: 2, step: 0.01 },
+    curveAmplitudeStart: { value: 0, min: 0, max: 100, step: 1 },
+    curveAmplitudeEnd: { value: 64, min: 0, max: 100, step: 1 },
+    curveTwists: { value: 1, min: 1, max: 10, step: 1 },
+    positionZ: { value: -999, min: -2000, max: 0, step: 10 },
+    particleCount: { value: 200, min: 200, max: 5000, step: 100 },
+    particleRandomOffset: { value: 10, min: 0, max: 10, step: 0.1 },
+    particleSpeed: { value: 0.24, min: 0, max: 1, step: 0.1 },
+    particleSize: { value: 0.02, min: 0.1, max: 5, step: 0.1 },
   })
 
-  // Загрузка и настройка текстуры для трубы
   const texture = useLoader(TextureLoader, '/img/texture.png')
   texture.wrapS = THREE.MirroredRepeatWrapping
   texture.wrapT = THREE.MirroredRepeatWrapping
-  texture.repeat.set(TEXTURE_REPEAT.x, TEXTURE_REPEAT.y)
+  texture.repeat.set(textureRepeat.x, textureRepeat.y)
 
-  // Создаем кривую
   const curve = useMemo(() => {
     return new THREE.CatmullRomCurve3(
-      Array.from({ length: SEGMENTS }, (_, i) => {
-        const progress = i / SEGMENTS
-        const angle = progress * Math.PI * CURVE_TWISTS
-        const amplitude = (1 - progress) * CURVE_AMPLITUDE_END + progress * CURVE_AMPLITUDE_START
+      Array.from({ length: segments }, (_, i) => {
+        const progress = i / segments
+        const angle = progress * Math.PI * curveTwists
+        const amplitude = (1 - progress) * curveAmplitudeEnd + progress * curveAmplitudeStart
         return new THREE.Vector3(
           Math.sin(angle) * amplitude,
           Math.cos(angle) * amplitude,
-          i * (TUNNEL_LENGTH / SEGMENTS),
+          i * (tunnelLength / segments),
         )
       }),
     )
-  }, [SEGMENTS, CURVE_TWISTS, CURVE_AMPLITUDE_START, CURVE_AMPLITUDE_END, TUNNEL_LENGTH])
+  }, [segments, curveTwists, curveAmplitudeStart, curveAmplitudeEnd, tunnelLength])
 
-  // Для анимации движения частиц по кривой храним их t-параметры
-  const particleData = useMemo(() => {
-    const data = []
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      // Начальное t и случайный оффсет
-      const t = i / PARTICLE_COUNT
-      data.push({ t })
+  const positions = useMemo(() => new Float32Array(particleCount * 3), [particleCount])
+
+  const particles = useMemo(() => {
+    const temp = []
+    for (let i = 0; i < particleCount; i++) {
+      const t = i / particleCount
+      const point = curve.getPoint(t)
+
+      const offset = new THREE.Vector3(
+        (Math.random() - 0.5) * particleRandomOffset,
+        (Math.random() - 0.5) * particleRandomOffset,
+        (Math.random() - 0.5) * particleRandomOffset,
+      )
+
+      const idx = i * 3
+      positions[idx] = point.x + offset.x
+      positions[idx + 1] = point.y + offset.y
+      positions[idx + 2] = point.z + offset.z
+
+      temp.push({
+        t,
+        offset,
+        speed: Math.random() * particleSpeed,
+      })
     }
-    return data
-  }, [PARTICLE_COUNT])
+    return temp
+  }, [particleCount, curve, particleRandomOffset, positions, particleSpeed])
 
-  // Вычисляем позиции частиц
-  const particlePositions = useMemo(() => {
-    const positions = new Float32Array(PARTICLE_COUNT * 3)
-    particleData.forEach((p, i) => {
-      const point = curve.getPoint(p.t)
-      positions[i * 3] = point.x + (Math.random() - 0.5) * PARTICLE_RANDOM_OFFSET
-      positions[i * 3 + 1] = point.y + (Math.random() - 0.5) * PARTICLE_RANDOM_OFFSET
-      positions[i * 3 + 2] = point.z + (Math.random() - 0.5) * PARTICLE_RANDOM_OFFSET
-    })
-    return positions
-  }, [PARTICLE_COUNT, PARTICLE_RANDOM_OFFSET, curve, particleData])
-
-  // Анимация смещения текстуры/вращения трубы и движения частиц по кривой
   useFrame((_, delta) => {
-    // Труба
-    const material = tunnelRef.current?.material as THREE.MeshStandardMaterial
-    if (material?.map) {
-      material.map.offset.x -= TUNNEL_SPEED.x * delta
-      material.map.offset.y -= TUNNEL_SPEED.y * delta
-    }
     if (tunnelRef.current) {
-      tunnelRef.current.rotation.z += AUTO_ROTATE_SPEED * delta
+      const material = tunnelRef.current.material as THREE.MeshStandardMaterial
+      if (material?.map) {
+        material.map.offset.x -= tunnelSpeed.x * delta
+        material.map.offset.y -= tunnelSpeed.y * delta
+      }
+      tunnelRef.current.rotation.z += autoRotateSpeed * delta
     }
 
-    // Частицы
     if (pointsRef.current) {
-      const positionAttr = pointsRef.current.geometry.attributes.position as THREE.BufferAttribute
-      const count = PARTICLE_COUNT
-      for (let i = 0; i < count; i++) {
-        // Обновляем t
-        particleData[i].t += PARTICLE_SPEED * delta
-        // t = 1 → сброс на 0
-        if (particleData[i].t > 1) {
-          particleData[i].t -= 1
-        }
-        const p = curve.getPoint(particleData[i].t)
-        const baseIndex = i * 3
-        positionAttr.array[baseIndex] = p.x + (Math.random() - 0.5) * PARTICLE_RANDOM_OFFSET * 0.1
-        positionAttr.array[baseIndex + 1] = p.y + (Math.random() - 0.5) * PARTICLE_RANDOM_OFFSET * 0.1
-        positionAttr.array[baseIndex + 2] = p.z
-      }
-      positionAttr.needsUpdate = true
+      const positionAttribute = pointsRef.current.geometry.getAttribute('position') as THREE.BufferAttribute
+
+      particles.forEach((particle, i) => {
+        particle.t += particle.speed * delta
+        if (particle.t > 1) particle.t -= 1
+
+        const point = curve.getPoint(particle.t)
+        const idx = i * 3
+        positionAttribute.array[idx] = point.x + particle.offset.x
+        positionAttribute.array[idx + 1] = point.y + particle.offset.y
+        positionAttribute.array[idx + 2] = point.z + particle.offset.z
+      })
+
+      positionAttribute.needsUpdate = true
+      pointsRef.current.geometry.computeBoundingSphere()
     }
   })
 
   return (
     <>
-      {/* Труба */}
-      <mesh ref={tunnelRef} position={[0, 0, POSITION_Z]}>
-        <tubeGeometry args={[curve, SEGMENTS, TUNNEL_RADIUS, 36, true]} />
+      <mesh ref={tunnelRef} position={[0, 0, positionZ]}>
+        <tubeGeometry args={[curve, segments, tunnelRadius, 36, true]} />
         <meshStandardMaterial side={THREE.BackSide} map={texture} />
       </mesh>
 
-      {/* Частицы */}
-      <points ref={pointsRef}>
+      <points ref={pointsRef} position={[0, 0, positionZ]}>
         <bufferGeometry>
           <bufferAttribute
             attach='attributes-position'
-            count={particlePositions.length / 3}
-            array={particlePositions}
+            count={particleCount}
+            array={positions}
             itemSize={3}
+            usage={THREE.DynamicDrawUsage}
           />
         </bufferGeometry>
-        <pointsMaterial size={1} color='white' transparent opacity={1} />
+        <pointsMaterial
+          size={particleSize}
+          sizeAttenuation={true}
+          color='white'
+          transparent
+          opacity={0.6}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          depthTest={true}
+        />
       </points>
     </>
   )

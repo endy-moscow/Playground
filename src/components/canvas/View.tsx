@@ -1,47 +1,38 @@
 'use client'
 
-import { forwardRef, Suspense, useImperativeHandle, useRef, useEffect } from 'react'
-import { PerspectiveCamera, View as ViewImpl, Fisheye, SpotLight } from '@react-three/drei'
+import { forwardRef, Suspense, useImperativeHandle, useRef, useEffect, useState } from 'react'
+import { PerspectiveCamera, View as ViewImpl } from '@react-three/drei'
 import { Three } from '@/helpers/components/Three'
 import { Leva, useControls } from 'leva'
+import { motion, animate } from 'framer-motion'
 
 export const Common = ({ color: bgColorProp }) => {
-  const {
-    ambientIntensity,
-    pointLightIntensity,
-    pointLightPosition,
-    pointLightColor,
-    secondPointLightIntensity,
-    secondPointLightPosition,
-    secondPointLightColor,
-    cameraFov,
-    cameraPosition,
-    backgroundColor,
-  } = useControls('Scene Settings', {
-    ambientIntensity: { value: 3, min: 0, max: 5, step: 0.1 },
-    pointLightIntensity: { value: 0, min: 0, max: 10000, step: 50 },
-    pointLightPosition: { value: [0, 0, -300] },
-    pointLightColor: { value: '#E72487' },
-    secondPointLightIntensity: { value: 0, min: 0, max: 10000, step: 50 },
-    secondPointLightPosition: { value: [0, 0, -280] },
-    secondPointLightColor: { value: '#E72487' },
-    cameraFov: { value: 70, min: 10, max: 100, step: 1 },
-    cameraPosition: { value: [0, 0, 0] },
-    backgroundColor: { value: bgColorProp || '#E72487' },
-  })
+  const [animatedIntensity, setAnimatedIntensity] = useState(0)
+
+  useEffect(() => {
+    const controls = animate(0, 5, {
+      duration: 1.6,
+      onUpdate: (value) => setAnimatedIntensity(value),
+    })
+
+    return () => controls.stop()
+  }, [])
+
+  const { pointLightIntensity, pointLightPosition, cameraFov, cameraPosition, backgroundColor } = useControls(
+    'Scene Settings',
+    {
+      pointLightIntensity: { value: 0, min: 0, max: 10000, step: 50 },
+      pointLightPosition: { value: [0, 0, -300] },
+      cameraFov: { value: 70, min: 10, max: 100, step: 1 },
+      cameraPosition: { value: [0, 0, 0] },
+      backgroundColor: { value: bgColorProp || '#000000' },
+    },
+  )
 
   return (
     <Suspense fallback={null}>
       <color attach='background' args={[backgroundColor]} />
-      <ambientLight intensity={ambientIntensity} color={pointLightColor} />
-      <pointLight position={pointLightPosition} intensity={pointLightIntensity} color={pointLightColor} decay={1} />
-      <pointLight
-        position={secondPointLightPosition}
-        intensity={secondPointLightIntensity}
-        color={secondPointLightColor}
-        decay={1}
-      />
-
+      <ambientLight intensity={animatedIntensity} color={'#ffffff'} />
       <PerspectiveCamera makeDefault fov={cameraFov} position={cameraPosition} />
     </Suspense>
   )
