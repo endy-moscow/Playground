@@ -21,11 +21,11 @@ const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.
   loading: () => <div className='flex size-full items-center justify-center bg-black' />,
 })
 
+const InfiniteRingEmitter = dynamic(() => import('../src/components/canvas/InfiniteRingEmitter'), { ssr: false })
+
 const Common = dynamic(() => import('@/components/canvas/View').then((mod) => mod.Common), {
   ssr: false,
 })
-
-const InfiniteRingEmitter = dynamic(() => import('../src/components/canvas/InfiniteRingEmitter'), { ssr: false })
 
 export default function Page() {
   return (
@@ -36,13 +36,13 @@ export default function Page() {
         <Suspense fallback={null}>
           {/* <ShaderOverlay position={[0, 0, -2]} scale={[3, 2, 1]} /> */}
           <InfiniteRingEmitter />
-          <Common color={'#000000'} />
+          <Common />
         </Suspense>
       </View>
       <motion.div
         initial={{ backgroundColor: 'rgba(0, 0, 0, 1)' }}
         animate={{ backgroundColor: 'rgba(231, 36, 135, 1)' }}
-        transition={{ duration: 1, delay: 1 }}
+        transition={{ duration: 2, delay: 1 }}
         className='absolute inset-0 z-10 h-screen w-full mix-blend-color'
       />
 
