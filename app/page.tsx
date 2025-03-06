@@ -34,17 +34,17 @@ export default function Page() {
 
       <View className='relative size-full'>
         <Suspense fallback={null}>
-          {/* <ShaderOverlay position={[0, 0, -2]} scale={[3, 2, 1]} /> */}
+          {/* <ShaderOverlay position={[0, 0, 0]} scale={[1, 1, 0]} /> */}
           <InfiniteRingEmitter />
           <Common />
         </Suspense>
       </View>
-      <motion.div
+      {/* <motion.div
         initial={{ backgroundColor: 'rgba(0, 0, 0, 1)' }}
         animate={{ backgroundColor: 'rgba(231, 36, 135, 1)' }}
         transition={{ duration: 2, delay: 1 }}
         className='absolute inset-0 z-10 h-screen w-full mix-blend-color'
-      />
+      /> */}
 
       {/* Mask */}
       <div className='scroll-smooth antialiased'>
