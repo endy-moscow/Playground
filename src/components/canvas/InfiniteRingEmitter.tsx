@@ -6,6 +6,20 @@ import { useControls } from 'leva'
 import { PointParticleSystem } from './PointParticleSystem'
 import { Tunnel } from './Tunnel'
 import { createBeerwareShaderMaterial } from '../../templates/Shader/BeerwareShaderMaterial'
+import { createOuterTunnelShaderMaterial } from '../../templates/Shader/OuterTunnelShaderMaterial'
+import { createInnerTunnelMaterial } from '../../templates/Shader/InnerTunnelShaderMaterial'
+
+// Make sure this interface matches exactly what's defined in BeerwareShaderMaterial.ts
+interface BeerwareShaderOptions {
+  color1: string
+  color2: string
+  opacity: number
+  scale: number
+  offsetX: number
+  offsetY: number
+  time?: number
+  resolution?: THREE.Vector2
+}
 
 const InfiniteRingEmitter = () => {
   // Refs for texture offsets and animation state
@@ -40,8 +54,8 @@ const InfiniteRingEmitter = () => {
   } = useControls('Внешний туннель', {
     tunnelSpeedX: { value: 0.4, min: -10, max: 10, step: 0.1, label: 'Скорость X' },
     tunnelSpeedY: { value: 0.2, min: -10, max: 10, step: 0.1, label: 'Скорость Y' },
-    textureRepeatX: { value: 2, min: 1, max: 64, label: 'Повтор текстуры X' },
-    textureRepeatY: { value: 2, min: 1, max: 64, label: 'Повтор текстуры Y' },
+    textureRepeatX: { value: 64, min: 1, max: 128, label: 'Повтор текстуры X' },
+    textureRepeatY: { value: 64, min: 1, max: 128, label: 'Повтор текстуры Y' },
     overlayTextureRepeatX: { value: 0.8, min: 0.1, max: 10, label: 'Повтор наложения X' },
     overlayTextureRepeatY: { value: 0.8, min: 0.1, max: 10, label: 'Повтор наложения Y' },
     bumpIntensity: { value: 7, min: 0, max: 50, step: 1, label: 'Интенсивность рельефа' },
@@ -49,27 +63,38 @@ const InfiniteRingEmitter = () => {
   })
 
   // Настройки среднего туннеля (шейдер)
-  const { middleRadiusRatio, middleOpacity, middleSpeed, middleSpeedX, middleSpeedY, middleScale, middleColorPreset } =
-    useControls('Средний туннель', {
-      middleRadiusRatio: { value: 0.85, min: 0.2, max: 0.98, step: 0.01, label: 'Пропорция радиуса' },
-      middleOpacity: { value: 0.5, min: 0, max: 1, step: 0.05, label: 'Прозрачность' },
-      middleSpeed: { value: 0.5, min: 0.1, max: 5, step: 0.1, label: 'Скорость анимации' },
-      middleSpeedX: { value: 0.6, min: -10, max: 10, step: 0.1, label: 'Скорость X' },
-      middleSpeedY: { value: 0.2, min: -10, max: 10, step: 0.1, label: 'Скорость Y' },
-      middleScale: { value: 124, min: 1, max: 1000, step: 0.5, label: 'Размер ячеек' },
-      // Используем выбор из предустановленных цветов
-      middleColorPreset: {
-        options: {
-          Magenta: 'magenta',
-          Красный: 'red',
-          Зеленый: 'green',
-          Оранжевый: 'orange',
-          Фиолетовый: 'purple',
-        },
-        value: 'magenta',
-        label: 'Основной цвет',
+  const {
+    middleRadiusRatio,
+    middleOpacity,
+    middleSpeed,
+    middleSpeedX,
+    middleSpeedY,
+    middleScale,
+    middleColorPreset,
+    middleFadeStart,
+    middleFadeEnd,
+  } = useControls('Средний туннель', {
+    middleRadiusRatio: { value: 0.85, min: 0.2, max: 0.98, step: 0.01, label: 'Пропорция радиуса' },
+    middleOpacity: { value: 0.5, min: 0, max: 1, step: 0.05, label: 'Прозрачность' },
+    middleSpeed: { value: 0.5, min: 0.1, max: 5, step: 0.1, label: 'Скорость анимации' },
+    middleSpeedX: { value: 0.6, min: -10, max: 10, step: 0.1, label: 'Скорость X' },
+    middleSpeedY: { value: 0.2, min: -10, max: 10, step: 0.1, label: 'Скорость Y' },
+    middleScale: { value: 124, min: 1, max: 1000, step: 0.5, label: 'Размер ячеек' },
+    // Используем выбор из предустановленных цветов
+    middleColorPreset: {
+      options: {
+        Magenta: 'magenta',
+        Красный: 'red',
+        Зеленый: 'green',
+        Оранжевый: 'orange',
+        Фиолетовый: 'purple',
       },
-    })
+      value: 'magenta',
+      label: 'Основной цвет',
+    },
+    middleFadeStart: { value: 0.6, min: 0, max: 1, step: 0.001, label: 'Начало затухания' },
+    middleFadeEnd: { value: 0.5, min: 0, max: 1, step: 0.001, label: 'Конец затухания' },
+  })
 
   // Функция для преобразования предустановок в цвета
   const getColorsByPreset = (preset) => {
@@ -153,91 +178,14 @@ const InfiniteRingEmitter = () => {
 
   // Внешний шейдерный материал (текстурированный туннель)
   const outerTunnelMaterial = React.useMemo(() => {
-    return new THREE.ShaderMaterial({
-      side: THREE.BackSide,
-      transparent: true,
-      opacity: 0.95,
-      depthWrite: true,
-      depthTest: true,
-      uniforms: {
-        baseColorMap: { value: baseColorMap },
-        overlayTexture: { value: overlayTexture },
-        bumpMap: { value: bumpMap },
-        bumpIntensity: { value: bumpIntensity },
-        overlayOpacity: { value: overlayOpacity },
-        baseOffset: { value: new THREE.Vector2(0, 0) },
-        baseRepeat: { value: new THREE.Vector2(textureRepeat.x, textureRepeat.y) },
-        overlayRepeat: { value: new THREE.Vector2(overlayTextureRepeat.x, overlayTextureRepeat.y) },
-      },
-      vertexShader: `
-        varying vec2 vUv;
-        varying vec3 vNormal;
-        varying vec3 vViewPosition;
-        varying vec3 vTangent;
-        varying vec3 vBitangent;
-        
-        void main() {
-          vUv = uv;
-          vNormal = normalize(normalMatrix * normal);
-          
-          // Calculate tangent vectors for bump mapping
-          vec3 tangent = normalize(normalMatrix * vec3(1.0, 0.0, 0.0));
-          vec3 bitangent = normalize(cross(vNormal, tangent));
-          vTangent = tangent;
-          vBitangent = bitangent;
-          
-          vec4 modelPosition = modelViewMatrix * vec4(position, 1.0);
-          vViewPosition = -modelPosition.xyz;
-          
-          gl_Position = projectionMatrix * modelPosition;
-        }
-      `,
-      fragmentShader: `
-        uniform sampler2D baseColorMap;
-        uniform sampler2D overlayTexture;
-        uniform sampler2D bumpMap;
-        uniform float bumpIntensity;
-        uniform float overlayOpacity;
-        uniform vec2 baseOffset;
-        uniform vec2 baseRepeat;
-        uniform vec2 overlayRepeat;
-        
-        varying vec2 vUv;
-        varying vec3 vNormal;
-        varying vec3 vViewPosition;
-        varying vec3 vTangent;
-        varying vec3 vBitangent;
-        
-        void main() {
-          vec2 baseUv = mod((vUv * baseRepeat) + baseOffset, 1.0);
-          vec2 overlayUv = mod(vUv * overlayRepeat, 1.0);
-          
-          // Sample the base and overlay textures
-          vec4 baseColor = texture2D(baseColorMap, baseUv);
-          vec4 overlayColor = texture2D(overlayTexture, overlayUv);
-          
-          // Sample the bump map
-          vec3 bumpValue = texture2D(bumpMap, baseUv).rgb;
-          float bumpAmount = (bumpValue.r + bumpValue.g + bumpValue.b) / 3.0;
-          float bumpScale = 0.015 * bumpIntensity;
-          
-          vec3 normalPerturbation = normalize(
-            vNormal + vTangent * (bumpAmount * 2.0 - 1.0) * bumpScale
-            + vBitangent * (bumpAmount * 2.0 - 1.0) * bumpScale
-          );
-          
-          float viewFactor = pow(abs(dot(normalPerturbation, vec3(0.0, 0.0, 1.0))), 0.5);
-          float blendFactor = overlayColor.a * overlayOpacity * viewFactor;
-          
-          float reflectivity = bumpAmount * 0.2 * bumpIntensity;
-          
-          vec4 finalColor = vec4(mix(baseColor.rgb * 0.8, overlayColor.rgb, blendFactor), baseColor.a);
-          finalColor.rgb += reflectivity * vec3(0.1, 0.1, 0.2);
-          finalColor.rgb = max(finalColor.rgb, vec3(0.02));
-          
-          gl_FragColor = finalColor;
-        }
-      `,
+    return createOuterTunnelShaderMaterial({
+      baseColorMap,
+      overlayTexture,
+      bumpMap,
+      bumpIntensity,
+      overlayOpacity,
+      textureRepeat,
+      overlayTextureRepeat,
     })
   }, [baseColorMap, overlayTexture, bumpMap, bumpIntensity, textureRepeat, overlayTextureRepeat, overlayOpacity])
 
@@ -248,20 +196,20 @@ const InfiniteRingEmitter = () => {
       color2: middleColor2,
       opacity: middleOpacity,
       scale: middleScale,
-      offset: new THREE.Vector2(0, 0),
+      offsetX: 0,
+      offsetY: 0,
       time: 0,
       resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
+      fadeStart: middleFadeStart,
+      fadeEnd: middleFadeEnd,
     })
-  }, [middleColor1, middleColor2, middleOpacity, middleScale])
+  }, [middleColor1, middleColor2, middleOpacity, middleScale, middleFadeStart, middleFadeEnd])
 
   // Внутренний туннель с текстурой inner.png
   const innerTunnelMaterial = React.useMemo(() => {
-    return new THREE.MeshBasicMaterial({
-      map: innerTexture,
-      transparent: true,
+    return createInnerTunnelMaterial({
+      texture: innerTexture,
       opacity: innerOpacity,
-      side: THREE.BackSide,
-      depthWrite: false,
     })
   }, [innerTexture, innerOpacity])
 
@@ -296,10 +244,10 @@ const InfiniteRingEmitter = () => {
         middleMaterial.uniforms.time.value = animationTimeRef.current
       }
 
-      // Безопасное обновление offset
-      if (middleMaterial.uniforms.offset) {
-        middleMaterial.uniforms.offset.value.x = middleOffsetRef.current.x
-        middleMaterial.uniforms.offset.value.y = middleOffsetRef.current.y
+      // Безопасное обновление offset - fixed to use offsetX and offsetY
+      if (middleMaterial.uniforms.offsetX && middleMaterial.uniforms.offsetY) {
+        middleMaterial.uniforms.offsetX.value = middleOffsetRef.current.x
+        middleMaterial.uniforms.offsetY.value = middleOffsetRef.current.y
       }
 
       // Безопасное обновление resolution
