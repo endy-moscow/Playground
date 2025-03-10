@@ -14,7 +14,7 @@ import StableConnectionFloor from '@/components/dom/StableConnectionFloor'
 import SubscriptionFloor from '@/components/dom/SubscriptionFloor'
 import FAQFloor from '@/components/dom/FAQFloor'
 import Footer from '@/components/dom/Footer'
-import { ShaderOverlay } from '@/templates/Shader/ShaderOverlay'
+
 // Динамические импорты
 const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.View), {
   ssr: false,
@@ -39,12 +39,12 @@ export default function Page() {
           <Common />
         </Suspense>
       </View>
-      {/* <motion.div
+      <motion.div
         initial={{ backgroundColor: 'rgba(0, 0, 0, 1)' }}
         animate={{ backgroundColor: 'rgba(231, 36, 135, 1)' }}
         transition={{ duration: 2, delay: 1 }}
         className='absolute inset-0 z-10 h-screen w-full mix-blend-color'
-      /> */}
+      />
 
       {/* Mask */}
       <div className='scroll-smooth antialiased'>

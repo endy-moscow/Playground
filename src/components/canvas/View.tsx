@@ -22,8 +22,8 @@ export const Common = () => {
     <Suspense fallback={null}>
       <color attach='background' args={['#000000']} />
       <ambientLight intensity={5} color='#000000' />
-      <PerspectiveCamera makeDefault fov={15} position={[0, 0, 0]} rotation={[Math.PI * -0.32, Math.PI, 0]} />
-      <CameraShake {...shakeConfig} />
+      <PerspectiveCamera makeDefault fov={35} position={[0, 0, 0]} rotation={[0, 0, 0]} />
+      {/* <CameraShake {...shakeConfig} /> */}
     </Suspense>
   )
 }
