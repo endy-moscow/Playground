@@ -53,13 +53,13 @@ export default function Page() {
 
         {/* Second Floor */}
         {/* <VideoCallFloor /> */}
-        <SpeedFloor />
+        {/* <SpeedFloor /> */}
 
         {/* Third Floor*/}
-        <SendFileFloor />
+        {/* <SendFileFloor /> */}
 
         {/* Fourth Floor */}
-        <MapFloor />
+        {/* <MapFloor /> */}
 
         {/* Fifth Floor */}
         {/* <GameFloor /> */}
@@ -74,9 +74,9 @@ export default function Page() {
         {/* <SubscriptionFloor /> */}
 
         {/* Ninth Floor */}
-        <FAQFloor />
+        {/* <FAQFloor /> */}
 
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </>
   )

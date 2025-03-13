@@ -13,6 +13,9 @@ interface BeerwareShaderOptions {
   fadeFar?: number // Коэффициент затухания дальних ячеек (0-1)
   fadeStart?: number // Позиция начала затухания (0-1)
   fadeEnd?: number // Позиция конца затухания (0-1)
+  blinkSpeed?: number // Скорость мигания (1.0 = нормальная скорость)
+  blinkVariation?: number // Вариация в скорости мигания (0-1)
+  blinkProbability?: number // Вероятность мигания клетки (0-1)
 }
 
 export const createBeerwareShaderMaterial = (options: BeerwareShaderOptions = {}): THREE.ShaderMaterial => {
@@ -26,10 +29,13 @@ export const createBeerwareShaderMaterial = (options: BeerwareShaderOptions = {}
     offsetY = 0.0,
     time = 0.0,
     resolution = new THREE.Vector2(window.innerWidth, window.innerHeight),
-    fadeNear = 0.7, // По умолчанию ближние ячейки будут тусклее на 30%
-    fadeFar = 0.9,  // По умолчанию дальние ячейки будут затухать на 90%
-    fadeStart = 0.7, // По умолчанию затухание начинается в 70% от длины туннеля
-    fadeEnd = 1.0,   // По умолчанию затухание заканчивается в конце туннеля
+    fadeNear = 0.7, 
+    fadeFar = 0.9,  
+    fadeStart = 0.7, 
+    fadeEnd = 1.0,
+    blinkSpeed = 1.0,
+    blinkVariation = 0.8,
+    blinkProbability = 0.7,
   } = options
 
   // Преобразуем цвета в THREE.Color
@@ -53,6 +59,9 @@ export const createBeerwareShaderMaterial = (options: BeerwareShaderOptions = {}
       fadeFar: { value: fadeFar },
       fadeStart: { value: fadeStart },
       fadeEnd: { value: fadeEnd },
+      blinkSpeed: { value: blinkSpeed },
+      blinkVariation: { value: blinkVariation },
+      blinkProbability: { value: blinkProbability },
     },
     vertexShader: `
       varying vec2 vUv;
@@ -81,13 +90,22 @@ export const createBeerwareShaderMaterial = (options: BeerwareShaderOptions = {}
       uniform float fadeFar;
       uniform float fadeStart;
       uniform float fadeEnd;
+      uniform float blinkSpeed;
+      uniform float blinkVariation;
+      uniform float blinkProbability;
       
       varying vec2 vUv;
       varying float vDepth;
       
+      // Improved random function for better distribution
       vec2 rand(vec2 p) {
-        float n = sin(dot(p, vec2(1.0, 113.0)));
-        return fract(vec2(262144.0, 32768.0) * n);     
+        p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+        return fract(sin(p) * 43758.5453);
+      }
+      
+      // Hash function for more chaotic randomness
+      float hash(float n) {
+        return fract(sin(n) * 43758.5453123);
       }
       
       float sdRoundBox(vec2 p, vec2 b, float r) {
@@ -113,34 +131,65 @@ export const createBeerwareShaderMaterial = (options: BeerwareShaderOptions = {}
         float s = smoothstep(0.1, 0.01, a);
         
         vec2 ran = rand(fl);
-        float t = pow(abs(sin(ran.x * 6.2831 + time * (0.25 + ran.y))), 8.0);
         
-        // Делаем квадраты яркими без затухания
-        t = t > 0.5 ? 1.0 : t * 0.5;
+        // New multi-layer blinking strategy
+        float cellID = ran.x + ran.y * 1000.0;
         
-        // Нормализуем глубину для более предсказуемой работы
-        // Приводим к диапазону примерно от 0 (ближе) до 1 (дальше)
-        // Значение 1000.0 - это предполагаемая максимальная глубина туннеля
+        // Determine if this cell should blink at all
+        float shouldBlink = ran.x < blinkProbability ? 1.0 : 0.0;
+        
+        // Generate multiple animation frequencies for this cell
+        float freq1 = 0.3 + ran.x * blinkVariation;
+        float freq2 = 0.7 + ran.y * blinkVariation;
+        float freq3 = 1.2 - ran.x * blinkVariation;
+        
+        // Offset phases to avoid alignment
+        float phase1 = hash(cellID) * 6.2831;
+        float phase2 = hash(cellID * 1.5) * 6.2831;
+        float phase3 = hash(cellID * 0.8) * 6.2831;
+        
+        // Generate different animation types for more variation
+        float wave1 = sin(time * blinkSpeed * freq1 + phase1);
+        float wave2 = abs(sin(time * blinkSpeed * freq2 + phase2));
+        float wave3 = pow(sin(time * blinkSpeed * freq3 + phase3) * 0.5 + 0.5, 2.0);
+        
+        // Use one of three animation types based on cell ID
+        float waveSelector = fract(cellID * 7.919) * 3.0;
+        float t;
+        
+        if (waveSelector < 1.0) {
+            t = wave1 * 0.5 + 0.5; // Smooth sine
+        } else if (waveSelector < 2.0) {
+            t = wave2;             // Abs sine
+        } else {
+            t = wave3;             // Power sine
+        }
+        
+        // Add occasional random discontinuities to break patterns
+        if (hash(cellID + floor(time * 0.1)) < 0.01) {
+            t = 1.0 - t; // Flip animation state for some cells occasionally
+        }
+        
+        // Apply binary threshold for more pronounced on/off states
+        t = shouldBlink * ((t > 0.5) ? 1.0 : 0.2);
+        
+        // Add some cells that stay always on
+        if (hash(cellID * 3.33) < 0.1) {
+            t = 1.0;
+        }
+        
+        // Нормализуем глубину
         float depth = -vDepth;
         float normalizedDepth = clamp((depth + 1000.0) / 2000.0, 0.0, 1.0);
         
-        // DEBUG - Раскрашиваем тоннель в зависимости от глубины (0-красный, 1-синий)
-        // vec3 debugColor = mix(vec3(1.0, 0.0, 0.0), vec3(0.0, 0.0, 1.0), normalizedDepth);
-        
-        // 1. Эффект затухания ближних ячеек (линейный)
-        // Использует fadeNear: 0-полное затухание, 1-без затухания
+        // Факторы затухания
         float nearFactor = mix(fadeNear, 1.0, normalizedDepth);
-        
-        // 2. Эффект затухания дальних ячеек с мягкой границей
-        // Использует fadeStart и fadeEnd для определения зоны затухания
         float distanceFromStart = (normalizedDepth - fadeStart) / (fadeEnd - fadeStart);
         float farFactor = 1.0 - clamp(distanceFromStart, 0.0, 1.0) * fadeFar;
-        
-        // Объединяем оба фактора затухания
         float depthFade = nearFactor * farFactor;
         
         // Добавляем небольшое случайное значение для неравномерного затухания
-        float randomFactor = ran.x * 0.2 + 0.8; // От 0.8 до 1.0
+        float randomFactor = ran.x * 0.2 + 0.8;
         depthFade *= randomFactor;
         
         // Смешиваем цвета с учётом всех факторов

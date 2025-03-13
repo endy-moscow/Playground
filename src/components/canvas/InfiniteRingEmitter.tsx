@@ -67,8 +67,6 @@ const InfiniteRingEmitter = () => {
     middleSpeedX,
     middleSpeedY,
     middleScale,
-    middleFadeNearCamera,
-    middleFadeDistantParts,
     middleFadeStartDistance,
     middleFadeEndDistance,
   } = useControls('Средний туннель', {
@@ -81,7 +79,7 @@ const InfiniteRingEmitter = () => {
     middleFadeNearCamera: { value: 0.0, min: 0, max: 1, step: 0.01, label: 'Затухание у камеры' },
     middleFadeDistantParts: { value: 0.025, min: 0, max: 1, step: 0.01, label: 'Затухание вдали' },
     middleFadeStartDistance: { value: 980, min: 0, max: 2000, step: 10, label: 'Начало затухания (у камеры)' },
-    middleFadeEndDistance: { value: 690, min: 0, max: 2000, step: 10, label: 'Конец затухания (вдали)' },
+    middleFadeEndDistance: { value: 630, min: 0, max: 2000, step: 10, label: 'Конец затухания (вдали)' },
   })
 
   // Фиксированные цвета вместо выбора из предустановок
