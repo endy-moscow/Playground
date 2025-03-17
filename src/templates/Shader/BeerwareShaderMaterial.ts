@@ -192,13 +192,28 @@ export const createBeerwareShaderMaterial = (options: BeerwareShaderOptions = {}
         float randomFactor = ran.x * 0.2 + 0.8;
         depthFade *= randomFactor;
         
-        // Смешиваем цвета с учётом всех факторов
-        vec3 col = mix(color1, color2, ran.y) * s * t * depthFade;
+        // Определяем находимся ли мы в "хвосте" тоннеля (дальняя часть)
+        bool isTail = normalizedDepth < fadeEnd;
         
-        // Применяем прозрачность
-        float finalAlpha = s * opacity * depthFade;
-        
-        gl_FragColor = vec4(col, finalAlpha);
+        // Определяем интенсивность ячейки
+        float cellIntensity = s * t * depthFade;
+
+        // Устанавливаем цвет и прозрачность в зависимости от положения
+        if (isTail) {
+          // Мы в хвосте тоннеля - используем чистый черный цвет с фиксированной непрозрачностью
+          if (s > 0.01) {
+            // Ячейка видима - используем цвет с низкой интенсивностью
+            vec3 tailColor = mix(color1, color2, ran.y) * cellIntensity * 0.3;
+            gl_FragColor = vec4(tailColor, opacity);
+          } else {
+            // Пространство между ячейками - используем чисто чёрный цвет
+            gl_FragColor = vec4(0.0, 0.0, 0.0, opacity);
+          }
+        } else {
+          // Обычная часть тоннеля - используем стандартное отображение
+          vec3 col = mix(color1, color2, ran.y) * s * t * depthFade;
+          gl_FragColor = vec4(col, opacity);
+        }
       }
     `,
   })
