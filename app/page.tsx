@@ -21,7 +21,7 @@ const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.
   loading: () => <div className='flex size-full items-center justify-center bg-black' />,
 })
 
-const InfiniteRingEmitter = dynamic(() => import('../src/components/canvas/InfiniteRingEmitter'), { ssr: false })
+const AltelTube = dynamic(() => import('@/components/canvas/AltelTube'), { ssr: false })
 
 const Common = dynamic(() => import('@/components/canvas/View').then((mod) => mod.Common), {
   ssr: false,
@@ -35,7 +35,8 @@ export default function Page() {
       <View className='relative size-full'>
         <Suspense fallback={null}>
           {/* <ShaderOverlay position={[0, 0, 0]} scale={[1, 1, 0]} /> */}
-          <InfiniteRingEmitter />
+          {/* <AltelTube /> */}
+          <AltelTube />
           <Common />
         </Suspense>
       </View>
@@ -52,31 +53,31 @@ export default function Page() {
         <HeroFloor />
 
         {/* Second Floor */}
-        {/* <VideoCallFloor /> */}
-        {/* <SpeedFloor /> */}
+        <VideoCallFloor />
+        <SpeedFloor />
 
         {/* Third Floor*/}
-        {/* <SendFileFloor /> */}
+        <SendFileFloor />
 
         {/* Fourth Floor */}
-        {/* <MapFloor /> */}
+        <MapFloor />
 
         {/* Fifth Floor */}
-        {/* <GameFloor /> */}
+        <GameFloor />
 
         {/* Sixth Floor */}
-        {/* <SpeedFloor /> */}
+        <SpeedFloor />
 
         {/* Seventh Floor */}
-        {/* <StableConnectionFloor /> */}
+        <StableConnectionFloor />
 
         {/* Eighth Floor */}
-        {/* <SubscriptionFloor /> */}
+        <SubscriptionFloor />
 
         {/* Ninth Floor */}
-        {/* <FAQFloor /> */}
+        <FAQFloor />
 
-        {/* <Footer /> */}
+        <Footer />
       </div>
     </>
   )

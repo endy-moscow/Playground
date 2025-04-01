@@ -19,7 +19,7 @@ interface BeerwareShaderOptions {
   resolution?: THREE.Vector2
 }
 
-const InfiniteRingEmitter = () => {
+const AltelTube = () => {
   // Refs для анимации
   const middleOffsetRef = useRef({ x: 0, y: 0 })
   const animationTimeRef = useRef(0)
@@ -210,4 +210,4 @@ const InfiniteRingEmitter = () => {
   )
 }
 
-export default InfiniteRingEmitter
+export default AltelTube
