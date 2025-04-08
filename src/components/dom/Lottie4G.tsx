@@ -1,32 +1,17 @@
 import React from 'react'
-import { useLottie, useLottieInteractivity } from 'lottie-react'
+import { useLottie } from 'lottie-react'
 import lottie4GData from './speed-data-4g.json'
 
 const Lottie4G = () => {
   const options = {
     animationData: lottie4GData,
-    loop: false,
+    loop: true,
     autoplay: true,
   }
-  const lottieObj = useLottie(options)
-  const Animation = useLottieInteractivity({
-    lottieObj,
-    mode: 'scroll',
-    actions: [
-      {
-        visibility: [0.0, 0.5],
-        type: 'stop',
-        frames: [0, 29],
-      },
-      {
-        visibility: [0.5, 1],
-        type: 'loop',
-        frames: [30, 89],
-      },
-    ],
-  })
 
-  return Animation
+  const { View } = useLottie(options)
+
+  return View
 }
 
 export default Lottie4G
