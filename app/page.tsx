@@ -54,10 +54,10 @@ export default function Page() {
 
         {/* Second Floor */}
         <VideoCallFloor />
-        {/* <SpeedFloor /> */}
+        <SpeedFloor />
 
         {/* Third Floor*/}
-        {/* <SendFileFloor /> */}
+        <SendFileFloor />
 
         {/* Fourth Floor */}
         <MapFloor />

@@ -11,6 +11,7 @@ const Lottie4G = () => {
   const lottieObj = useLottie(options)
   const Animation = useLottieInteractivity({
     lottieObj,
+    mode: 'scroll',
     actions: [
       {
         visibility: [0.0, 0.5],
