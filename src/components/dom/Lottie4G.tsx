@@ -10,7 +10,6 @@ const Lottie4G = () => {
   }
   const lottieObj = useLottie(options)
   const Animation = useLottieInteractivity({
-    mode: 'scroll', // добавлено обязательное поле
     lottieObj,
     actions: [
       {

@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
+import { motion } from 'framer-motion'
 import 'swiper/css'
 import HeroFloor from '@/components/dom/HeroFloor'
 import VideoCallFloor from '@/components/dom/VideoCallFloor'
@@ -13,18 +14,18 @@ import StableConnectionFloor from '@/components/dom/StableConnectionFloor'
 import SubscriptionFloor from '@/components/dom/SubscriptionFloor'
 import FAQFloor from '@/components/dom/FAQFloor'
 import Footer from '@/components/dom/Footer'
-import { Fisheye } from '@react-three/drei'
+
 // Динамические импорты
 const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.View), {
   ssr: false,
   loading: () => <div className='flex size-full items-center justify-center bg-black' />,
 })
 
+const AltelTube = dynamic(() => import('@/components/canvas/AltelTube'), { ssr: false })
+
 const Common = dynamic(() => import('@/components/canvas/View').then((mod) => mod.Common), {
   ssr: false,
 })
-
-const InfiniteRingEmitter = dynamic(() => import('../src/components/canvas/InfiniteRingEmitter'), { ssr: false })
 
 export default function Page() {
   return (
@@ -33,11 +34,18 @@ export default function Page() {
 
       <View className='relative size-full'>
         <Suspense fallback={null}>
-          <InfiniteRingEmitter />
-          <Common color={'#000'} />
+          {/* <ShaderOverlay position={[0, 0, 0]} scale={[1, 1, 0]} /> */}
+          {/* <AltelTube /> */}
+          <AltelTube />
+          <Common />
         </Suspense>
       </View>
-      <div className='absolute inset-0 z-10 h-screen w-full bg-altel mix-blend-color'></div>
+      <motion.div
+        initial={{ backgroundColor: 'rgba(0, 0, 0, 1)' }}
+        animate={{ backgroundColor: 'rgba(231, 36, 135, 1)' }}
+        transition={{ duration: 2, delay: 1 }}
+        className='absolute inset-0 z-10 h-screen w-full mix-blend-color'
+      />
 
       {/* Mask */}
       <div className='scroll-smooth antialiased'>
@@ -45,7 +53,7 @@ export default function Page() {
         <HeroFloor />
 
         {/* Second Floor */}
-        {/* <VideoCallFloor /> */}
+        <VideoCallFloor />
         <SpeedFloor />
 
         {/* Third Floor*/}
@@ -55,16 +63,16 @@ export default function Page() {
         <MapFloor />
 
         {/* Fifth Floor */}
-        {/* <GameFloor /> */}
+        <GameFloor />
 
         {/* Sixth Floor */}
-        {/* <SpeedFloor /> */}
+        <SpeedFloor />
 
         {/* Seventh Floor */}
-        {/* <StableConnectionFloor /> */}
+        <StableConnectionFloor />
 
         {/* Eighth Floor */}
-        {/* <SubscriptionFloor /> */}
+        <SubscriptionFloor />
 
         {/* Ninth Floor */}
         <FAQFloor />
